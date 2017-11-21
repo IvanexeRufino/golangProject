@@ -1,18 +1,21 @@
 package service
 
+import "github.com/golangProject/src/domain"
+
 //Tweet es un tweet
-var tweet string
+var tweet *domain.Tweet
 
 //PublishTweet qe hace nada
-func PublishTweet(ttweet string) {
-	tweet = ttweet
+func PublishTweet(tweet2 *domain.Tweet) {
+	tweet = tweet2
 }
 
 //GetTweet getter
-func GetTweet() string {
+func GetTweet() *domain.Tweet {
 	return tweet
 }
-func CleanTweet() {
-	tweet = ""
 
+//CleanTweet limpia el texto
+func CleanTweet() {
+	tweet.Text = ""
 }

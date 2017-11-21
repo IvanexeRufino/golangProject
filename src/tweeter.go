@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+
 	shell := ishell.New()
 	shell.SetPrompt("Tweeter >> ")
 	shell.Print("Type 'help' to know commands\n")
