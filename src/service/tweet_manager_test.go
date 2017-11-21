@@ -17,3 +17,12 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 	}
 
 }
+func TestClean(t *testing.T) {
+	tweet2 := ""
+	service.PublishTweet("aloja")
+	service.CleanTweet()
+
+	if service.GetTweet() != tweet2 {
+		t.Error("Expected tweet is", tweet2)
+	}
+}

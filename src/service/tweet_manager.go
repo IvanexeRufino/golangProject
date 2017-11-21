@@ -12,3 +12,7 @@ func PublishTweet(ttweet string) {
 func GetTweet() string {
 	return tweet
 }
+func CleanTweet() {
+	tweet = ""
+
+}
