@@ -23,11 +23,12 @@ func main() {
 			c.Print("Write your tweet: ")
 			text := c.ReadLine()
 			tweet = domain.NewTweet(user, text)
-			_, err := service.PublishTweet(tweet)
+			id, err := service.PublishTweet(tweet)
 			if err != nil {
 				c.Print("Your tweet exceeds 140 characters, plz be shorter \n")
 			} else {
-				c.Print("Tweet sent\n")
+				c.Print("Tweet sent with id ", id, "\n")
+				c.Print("Your tweet is like: ", tweet, "\n")
 			}
 			return
 		},
