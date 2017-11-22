@@ -30,6 +30,7 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 	}
 
 }
+
 func TestClean(t *testing.T) {
 	var tweet2 *domain.Tweet
 
@@ -43,4 +44,18 @@ func TestClean(t *testing.T) {
 	if service.GetTweet().Text != "" {
 		t.Error("Expected tweet is", tweet2)
 	}
+}
+
+func TestTweetWithoutUserIsNotPublished(t *testing.T) {
+	var tweet *domain.Tweet
+	var user string
+	text := "this is my first tweet"
+	tweet = domain.NewTweet(user, text)
+	var err error
+	err = service.PublishTweet(tweet)
+
+	if err != nil && err.Error() != "user is required" {
+		t.Error("User is required")
+	}
+
 }

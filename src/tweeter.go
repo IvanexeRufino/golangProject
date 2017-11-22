@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/abiosoft/ishell"
+	"github.com/golangProject/src/domain"
 	"github.com/golangProject/src/service"
 )
 
@@ -15,9 +16,13 @@ func main() {
 		Name: "publishTweet",
 		Help: "Publishes a tweet",
 		Func: func(c *ishell.Context) {
+			var tweet *domain.Tweet
 			defer c.ShowPrompt(true)
+			c.Print("Enter your username: ")
+			user := c.ReadLine()
 			c.Print("Write your tweet: ")
-			tweet := c.ReadLine()
+			text := c.ReadLine()
+			tweet = domain.NewTweet(user, text)
 			service.PublishTweet(tweet)
 			c.Print("Tweet sent\n")
 			return
@@ -40,8 +45,8 @@ func main() {
 	})
 
 	shell.AddCmd(&ishell.Cmd{
-		Name: "CleanTweet",
-		Help: "Clean Tweet",
+		Name: "cleanTweet",
+		Help: "Removes tweet",
 		Func: func(c *ishell.Context) {
 			service.CleanTweet()
 			c.Print("Tweet remove\n")
