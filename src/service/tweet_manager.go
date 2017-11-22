@@ -7,7 +7,7 @@ import (
 )
 
 //Tweet es un tweet
-var tweet *domain.Tweet
+var tweets []*domain.Tweet
 
 //PublishTweet qe hace nada
 func PublishTweet(tweet2 *domain.Tweet) error {
@@ -19,18 +19,24 @@ func PublishTweet(tweet2 *domain.Tweet) error {
 	} else if len(tweet2.Text) > 140 {
 		err = fmt.Errorf("text exceeds 140 characters")
 	} else {
-		tweet = tweet2
+		tweets = append(tweets, tweet2)
 	}
 
 	return err
 }
 
+//InitializeService aloca espacio
+func InitializeService() {
+	tweets = make([]*domain.Tweet, 0)
+
+}
+
 //GetTweet getter
-func GetTweet() *domain.Tweet {
-	return tweet
+func GetTweets() []*domain.Tweet {
+	return tweets
 }
 
 //CleanTweet limpia el texto
 func CleanTweet() {
-	tweet = nil
+	tweets = nil
 }

@@ -19,13 +19,13 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 
 	service.PublishTweet(tweet)
 
-	publishedTweet := service.GetTweet()
+	publishedTweets := service.GetTweets()
 
-	if publishedTweet.User != user && publishedTweet.Text != text {
+	if publishedTweets[0].User != user && publishedTweets[0].Text != text {
 		t.Error("Expected tweet is", tweet)
 	}
 
-	if publishedTweet.Date == nil {
+	if publishedTweets[0].Date == nil {
 		t.Error("Expected a date")
 	}
 
@@ -41,7 +41,7 @@ func TestClean(t *testing.T) {
 	service.PublishTweet(tweet2)
 	service.CleanTweet()
 
-	if service.GetTweet().Text != "" {
+	if service.GetTweets()[0].Text != "" {
 		t.Error("Expected tweet is", tweet2)
 	}
 }
@@ -97,5 +97,62 @@ func TestTweetWhichExceeding140CharactersIsNotPublished(t *testing.T) {
 	if err.Error() != "text exceeds 140 characters" {
 		t.Error("Expected error is text is required")
 	}
+
+}
+
+func TestCanPublishAndRetrieveMoreThanOneTweet(t *testing.T) {
+
+	// Initialization
+	service.InitializeService()
+
+	var tweet, secondTweet *domain.Tweet
+
+	user := "grupoesfera"
+	text := "This is my first tweet"
+	secondText := "This is my second tweet"
+
+	tweet = domain.NewTweet(user, text)
+	secondTweet = domain.NewTweet(user, secondText)
+
+	// Operation
+	service.PublishTweet(tweet)
+	service.PublishTweet(secondTweet)
+
+	// Validation
+	publishedTweets := service.GetTweets()
+
+	if len(publishedTweets) != 2 {
+
+		t.Errorf("Expected size is 2 but was %d", len(publishedTweets))
+		return
+	}
+
+	firstPublishedTweet := publishedTweets[0]
+	secondPublishedTweet := publishedTweets[1]
+
+	if !isValidTweet(t, firstPublishedTweet, user, text) {
+		return
+	}
+
+	if !isValidTweet(t, secondPublishedTweet, user, secondText) {
+		return
+	}
+
+}
+
+func isValidTweet(t *testing.T, tweet *domain.Tweet, user, text string) bool {
+
+	if tweet.User != user && tweet.Text != text {
+		t.Errorf("Expected tweet is %s: %s \nbut is %s: %s",
+			user, text, tweet.User, tweet.Text)
+		return false
+	}
+
+	if tweet.Date == nil {
+		t.Error("Expected date can't be nil")
+		return false
+	}
+
+	return true
 
 }

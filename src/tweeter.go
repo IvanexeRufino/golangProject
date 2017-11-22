@@ -23,8 +23,12 @@ func main() {
 			c.Print("Write your tweet: ")
 			text := c.ReadLine()
 			tweet = domain.NewTweet(user, text)
-			service.PublishTweet(tweet)
-			c.Print("Tweet sent\n")
+			err := service.PublishTweet(tweet)
+			if err != nil {
+				c.Print("Your tweet exceeds 140 characters, plz be shorter \n")
+			} else {
+				c.Print("Tweet sent\n")
+			}
 			return
 		},
 	})
@@ -35,11 +39,16 @@ func main() {
 		Func: func(c *ishell.Context) {
 
 			defer c.ShowPrompt(true)
+			i := 0
+			tweet := service.GetTweets()
 
-			tweet := service.GetTweet()
-
-			c.Println(tweet)
-
+			if tweet != nil {
+				for ; i < len(tweet); i++ {
+					c.Println(tweet[i])
+				}
+			} else {
+				c.Println(tweet)
+			}
 			return
 		},
 	})
