@@ -25,7 +25,7 @@ func main() {
 			tweet = domain.NewTweet(user, text)
 			id, err := service.PublishTweet(tweet)
 			if err != nil {
-				c.Print("Your tweet exceeds 140 characters, plz be shorter \n")
+				c.Print("Your tweet has some error, empty text or greater than 140 characters or empty user \n")
 			} else {
 				c.Print("Tweet sent with id ", id, "\n")
 				c.Print("Your tweet is like: ", tweet, "\n")
