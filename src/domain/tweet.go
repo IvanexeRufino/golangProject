@@ -15,6 +15,7 @@ type Tweet struct {
 //NewTweet crea un tweet
 func NewTweet(user, text string) *Tweet {
 	date := time.Now()
+	id++
 
 	tweet := Tweet{
 		id,
@@ -22,8 +23,6 @@ func NewTweet(user, text string) *Tweet {
 		text,
 		&date,
 	}
-
-	id++
 
 	return &tweet
 }
