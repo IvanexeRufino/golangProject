@@ -2,8 +2,11 @@ package domain
 
 import "time"
 
+var id int
+
 //Tweet estructura
 type Tweet struct {
+	ID   int
 	User string
 	Text string
 	Date *time.Time
@@ -14,10 +17,13 @@ func NewTweet(user, text string) *Tweet {
 	date := time.Now()
 
 	tweet := Tweet{
+		id,
 		user,
 		text,
 		&date,
 	}
+
+	id++
 
 	return &tweet
 }

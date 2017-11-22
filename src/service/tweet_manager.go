@@ -10,7 +10,7 @@ import (
 var tweets []*domain.Tweet
 
 //PublishTweet qe hace nada
-func PublishTweet(tweet2 *domain.Tweet) error {
+func PublishTweet(tweet2 *domain.Tweet) (int, error) {
 	var err error
 	if tweet2.User == "" {
 		err = fmt.Errorf("user is required")
@@ -22,7 +22,7 @@ func PublishTweet(tweet2 *domain.Tweet) error {
 		tweets = append(tweets, tweet2)
 	}
 
-	return err
+	return tweet2.ID, err
 }
 
 //InitializeService aloca espacio
@@ -31,7 +31,7 @@ func InitializeService() {
 
 }
 
-//GetTweet getter
+//GetTweets getter
 func GetTweets() []*domain.Tweet {
 	return tweets
 }
@@ -39,4 +39,15 @@ func GetTweets() []*domain.Tweet {
 //CleanTweet limpia el texto
 func CleanTweet() {
 	tweets = nil
+}
+
+//GetTweetByID recibe
+func GetTweetByID(id int) *domain.Tweet {
+	var i int
+	for ; i < len(tweets); i++ {
+		if tweets[i].ID == id {
+			return tweets[i]
+		}
+	}
+	return nil
 }
