@@ -51,3 +51,14 @@ func GetTweetByID(id int) *domain.Tweet {
 	}
 	return nil
 }
+
+//CountTweetsByUser cuenta twees por usuario
+func CountTweetsByUser(user string) int {
+	contador := 0
+	for i := 0; i < len(tweets); i++ {
+		if tweets[i].User == user {
+			contador++
+		}
+	}
+	return contador
+}
