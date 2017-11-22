@@ -14,9 +14,14 @@ func PublishTweet(tweet2 *domain.Tweet) error {
 	var err error
 	if tweet2.User == "" {
 		err = fmt.Errorf("user is required")
+	} else if tweet2.Text == "" {
+		err = fmt.Errorf("text is required")
+	} else if len(tweet2.Text) > 140 {
+		err = fmt.Errorf("text exceeds 140 characters")
 	} else {
 		tweet = tweet2
 	}
+
 	return err
 }
 
