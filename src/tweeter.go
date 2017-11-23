@@ -78,5 +78,25 @@ func main() {
 		},
 	})
 
+	shell.AddCmd(&ishell.Cmd{
+		Name: "getTweetsByUser",
+		Help: "Return tweets sent by user",
+		Func: func(c *ishell.Context) {
+
+			defer c.ShowPrompt(true)
+			c.Print("Enter a username: ")
+			user := c.ReadLine()
+			tweet := service.GetTweetsByUser(user)
+			if len(tweet) != 0 {
+				for i := 0; i < len(tweet); i++ {
+					c.Println(tweet[i])
+				}
+			} else {
+				c.Println("User hasnt got any tweets")
+			}
+			return
+		},
+	})
+
 	shell.Run()
 }
