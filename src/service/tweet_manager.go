@@ -9,6 +9,7 @@ import (
 //Tweet es un tweet
 var tweets map[string][]*domain.Tweet
 var lastTweet *domain.Tweet
+var followers map[string][]string
 
 //PublishTweet qe hace nada
 func PublishTweet(tweet2 *domain.Tweet) (int, error) {
@@ -32,6 +33,7 @@ func PublishTweet(tweet2 *domain.Tweet) (int, error) {
 func InitializeService() {
 	tweets = make(map[string][]*domain.Tweet)
 	lastTweet = nil
+	followers = make(map[string][]string)
 
 }
 
@@ -73,4 +75,26 @@ func CountTweetsByUser(user string) int {
 //GetTweetsByUser return tweets by user
 func GetTweetsByUser(user string) []*domain.Tweet {
 	return tweets[user]
+}
+
+//Follow follows
+func Follow(follower, user string) error {
+	var err error
+	_, ok := tweets[user]
+	if ok {
+		followers[follower] = append(followers[follower], user)
+	} else {
+		err = fmt.Errorf("user doesnt exist")
+	}
+	return err
+}
+
+//GetTimeline returns followers published tweets
+func GetTimeline(user string) []*domain.Tweet {
+	followedUsers := followers[user]
+	var listOfTweets []*domain.Tweet
+	for _, users := range followedUsers {
+		listOfTweets = append(listOfTweets, tweets[users]...)
+	}
+	return listOfTweets
 }
