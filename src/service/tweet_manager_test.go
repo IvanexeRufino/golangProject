@@ -293,6 +293,12 @@ func TestFollowuser(t *testing.T) {
 		return
 	}
 
+	err := service.Follow("grupoesfera", "mas de lo mismo")
+
+	if err == nil {
+		t.Errorf("Expected an error")
+	}
+
 }
 
 func isValidTweet(t *testing.T, tweet *domain.Tweet, id int, user, text string) bool {

@@ -12,6 +12,8 @@ func main() {
 	shell.SetPrompt("Tweeter >> ")
 	shell.Print("Type 'help' to know commands\n")
 
+	service.InitializeService()
+
 	shell.AddCmd(&ishell.Cmd{
 		Name: "publishTweet",
 		Help: "Publishes a tweet",
@@ -35,7 +37,7 @@ func main() {
 	})
 
 	shell.AddCmd(&ishell.Cmd{
-		Name: "showTweet",
+		Name: "showTweets",
 		Help: "Shows a tweet",
 		Func: func(c *ishell.Context) {
 
@@ -108,6 +110,46 @@ func main() {
 				}
 			} else {
 				c.Println("User hasnt got any tweets")
+			}
+			return
+		},
+	})
+
+	shell.AddCmd(&ishell.Cmd{
+		Name: "followUser",
+		Help: "Enter a user you want to follow",
+		Func: func(c *ishell.Context) {
+
+			defer c.ShowPrompt(true)
+			c.Print("Enter your username: ")
+			user := c.ReadLine()
+			c.Print("Enter a username you want to follow: ")
+			usertoFollow := c.ReadLine()
+			err := service.Follow(user, usertoFollow)
+			if err == nil {
+				c.Println("You are now following ", usertoFollow)
+			} else {
+				c.Println("That user doesnt exist")
+			}
+			return
+		},
+	})
+
+	shell.AddCmd(&ishell.Cmd{
+		Name: "showTimeline",
+		Help: "Shows published tweets that you  might be interested in",
+		Func: func(c *ishell.Context) {
+
+			c.Print("Enter your username: ")
+			user := c.ReadLine()
+			listofTweets := service.GetTimeline(user)
+
+			if len(listofTweets) != 0 {
+				for i := 0; i < len(listofTweets); i++ {
+					c.Println(listofTweets[i])
+				}
+			} else {
+				c.Println("Users you follow havent published yet")
 			}
 			return
 		},
