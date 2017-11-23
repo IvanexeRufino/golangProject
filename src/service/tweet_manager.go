@@ -36,6 +36,15 @@ func GetTweets() []*domain.Tweet {
 	return tweets
 }
 
+//GetLastTweet return last tweet
+func GetLastTweet() *domain.Tweet {
+	var lastTweet *domain.Tweet
+	if len(tweets) != 0 {
+		lastTweet = tweets[len(tweets)-1]
+	}
+	return lastTweet
+}
+
 //CleanTweet limpia el texto
 func CleanTweet() {
 	tweets = nil

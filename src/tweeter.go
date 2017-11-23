@@ -55,6 +55,21 @@ func main() {
 	})
 
 	shell.AddCmd(&ishell.Cmd{
+		Name: "getLastTweet",
+		Help: "Shows last tweet",
+		Func: func(c *ishell.Context) {
+			defer c.ShowPrompt(true)
+			tweet := service.GetLastTweet()
+			if tweet != nil {
+				c.Println(tweet)
+			} else {
+				c.Print("There isnt any tweets published \n")
+			}
+			return
+		},
+	})
+
+	shell.AddCmd(&ishell.Cmd{
 		Name: "cleanTweet",
 		Help: "Removes tweet",
 		Func: func(c *ishell.Context) {

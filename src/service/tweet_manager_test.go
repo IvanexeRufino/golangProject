@@ -46,6 +46,30 @@ func TestClean(t *testing.T) {
 	}
 }
 
+func TestGetLastTweetReturnsLastOne(t *testing.T) {
+
+	service.InitializeService()
+
+	var tweet, secondTweet *domain.Tweet
+
+	user := "grupoesfera"
+	text := "This is my first tweet"
+	secondText := "This is my second tweet"
+
+	tweet = domain.NewTweet(user, text)
+	secondTweet = domain.NewTweet(user, secondText)
+
+	service.PublishTweet(tweet)
+	secondId, _ := service.PublishTweet(secondTweet)
+
+	lastTweet := service.GetLastTweet()
+
+	if !isValidTweet(t, lastTweet, secondId, user, secondText) {
+		return
+	}
+
+}
+
 func TestTweetWithoutUserIsNotPublished(t *testing.T) {
 	var tweet *domain.Tweet
 	var user string
@@ -196,23 +220,6 @@ func TestCanCountTheTweetsSentByAnUser(t *testing.T) {
 	}
 }
 
-func isValidTweet(t *testing.T, tweet *domain.Tweet, id int, user, text string) bool {
-
-	if tweet.User != user && tweet.Text != text && tweet.ID != id {
-		t.Errorf("Expected tweet is %s: %s %d \nbut is %s: %s %d",
-			user, text, id, tweet.User, tweet.Text, tweet.ID)
-		return false
-	}
-
-	if tweet.Date == nil {
-		t.Error("Expected date can't be nil")
-		return false
-	}
-
-	return true
-
-}
-
 func TestCanRetrieveTheTweetsSentByAnUser(t *testing.T) {
 
 	// Initialization
@@ -253,5 +260,22 @@ func TestCanRetrieveTheTweetsSentByAnUser(t *testing.T) {
 	if !isValidTweet(t, secondPublishedTweet, secondId, user, secondText) {
 		return
 	}
+
+}
+
+func isValidTweet(t *testing.T, tweet *domain.Tweet, id int, user, text string) bool {
+
+	if tweet.User != user && tweet.Text != text && tweet.ID != id {
+		t.Errorf("Expected tweet is %s: %s %d \nbut is %s: %s %d",
+			user, text, id, tweet.User, tweet.Text, tweet.ID)
+		return false
+	}
+
+	if tweet.Date == nil {
+		t.Error("Expected date can't be nil")
+		return false
+	}
+
+	return true
 
 }
