@@ -12,7 +12,7 @@ func main() {
 	shell.SetPrompt("Tweeter >> ")
 	shell.Print("Type 'help' to know commands\n")
 
-	service.InitializeService()
+	tm := service.NewTweetManager()
 
 	shell.AddCmd(&ishell.Cmd{
 		Name: "publishTweet",
@@ -25,7 +25,7 @@ func main() {
 			c.Print("Write your tweet: ")
 			text := c.ReadLine()
 			tweet = domain.NewTweet(user, text)
-			id, err := service.PublishTweet(tweet)
+			id, err := tm.PublishTweet(tweet)
 			if err != nil {
 				c.Print("Your tweet has some error, empty text or greater than 140 characters or empty user \n")
 			} else {
@@ -43,7 +43,7 @@ func main() {
 
 			defer c.ShowPrompt(true)
 			i := 0
-			tweet := service.GetTweets()
+			tweet := tm.GetTweets()
 
 			if tweet != nil {
 				for ; i < len(tweet); i++ {
@@ -61,7 +61,7 @@ func main() {
 		Help: "Shows last tweet",
 		Func: func(c *ishell.Context) {
 			defer c.ShowPrompt(true)
-			tweet := service.GetLastTweet()
+			tweet := tm.GetLastTweet()
 			if tweet != nil {
 				c.Println(tweet)
 			} else {
@@ -75,7 +75,7 @@ func main() {
 		Name: "cleanTweet",
 		Help: "Removes tweet",
 		Func: func(c *ishell.Context) {
-			service.CleanTweet()
+			tm.CleanTweet()
 			c.Print("Tweet remove\n")
 			return
 		},
@@ -89,7 +89,7 @@ func main() {
 			defer c.ShowPrompt(true)
 			c.Print("Enter a username: ")
 			user := c.ReadLine()
-			count := service.CountTweetsByUser(user)
+			count := tm.CountTweetsByUser(user)
 			c.Print("User ", user, " has sent ", count, " tweets \n")
 			return
 		},
@@ -103,7 +103,7 @@ func main() {
 			defer c.ShowPrompt(true)
 			c.Print("Enter a username: ")
 			user := c.ReadLine()
-			tweet := service.GetTweetsByUser(user)
+			tweet := tm.GetTweetsByUser(user)
 			if len(tweet) != 0 {
 				for i := 0; i < len(tweet); i++ {
 					c.Println(tweet[i])
@@ -125,7 +125,7 @@ func main() {
 			user := c.ReadLine()
 			c.Print("Enter a username you want to follow: ")
 			usertoFollow := c.ReadLine()
-			err := service.Follow(user, usertoFollow)
+			err := tm.Follow(user, usertoFollow)
 			if err == nil {
 				c.Println("You are now following ", usertoFollow)
 			} else {
@@ -142,7 +142,7 @@ func main() {
 
 			c.Print("Enter your username: ")
 			user := c.ReadLine()
-			listofTweets := service.GetTimeline(user)
+			listofTweets := tm.GetTimeline(user)
 
 			if len(listofTweets) != 0 {
 				for i := 0; i < len(listofTweets); i++ {
