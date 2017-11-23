@@ -7,7 +7,8 @@ import (
 )
 
 //Tweet es un tweet
-var tweets []*domain.Tweet
+var tweets map[string][]*domain.Tweet
+var lastTweet *domain.Tweet
 
 //PublishTweet qe hace nada
 func PublishTweet(tweet2 *domain.Tweet) (int, error) {
@@ -19,40 +20,44 @@ func PublishTweet(tweet2 *domain.Tweet) (int, error) {
 	} else if len(tweet2.Text) > 140 {
 		err = fmt.Errorf("text exceeds 140 characters")
 	} else {
-		tweets = append(tweets, tweet2)
+		tweets[tweet2.User] = append(tweets[tweet2.User], tweet2)
 	}
+
+	lastTweet = tweet2
 
 	return tweet2.ID, err
 }
 
 //InitializeService aloca espacio
 func InitializeService() {
-	tweets = make([]*domain.Tweet, 0)
+	tweets = make(map[string][]*domain.Tweet)
+	lastTweet = nil
 
 }
 
 //GetTweets getter
 func GetTweets() []*domain.Tweet {
-	return tweets
+	var listOfTweets []*domain.Tweet
+	for _, listTweet := range tweets {
+		listOfTweets = append(listOfTweets, listTweet...)
+	}
+	return listOfTweets
 }
 
 //GetLastTweet return last tweet
 func GetLastTweet() *domain.Tweet {
-	var lastTweet *domain.Tweet
-	if len(tweets) != 0 {
-		lastTweet = tweets[len(tweets)-1]
-	}
 	return lastTweet
 }
 
 //CleanTweet limpia el texto
 func CleanTweet() {
 	tweets = nil
+	InitializeService()
 }
 
 //GetTweetByID recibe
 func GetTweetByID(id int) *domain.Tweet {
-	for _, tweet := range tweets {
+	for _, tweet := range GetTweets() {
 		if tweet.ID == id {
 			return tweet
 		}
@@ -62,23 +67,10 @@ func GetTweetByID(id int) *domain.Tweet {
 
 //CountTweetsByUser cuenta twees por usuario
 func CountTweetsByUser(user string) int {
-	contador := 0
-	for _, tweet := range tweets {
-		if tweet.User == user {
-			contador++
-		}
-	}
-	return contador
+	return len(tweets[user])
 }
 
 //GetTweetsByUser return tweets by user
 func GetTweetsByUser(user string) []*domain.Tweet {
-	var tweetsByUser []*domain.Tweet
-	tweetsByUser = make([]*domain.Tweet, 0)
-	for i, tweet := range tweets {
-		if tweet.User == user {
-			tweetsByUser = append(tweetsByUser, tweets[i])
-		}
-	}
-	return tweetsByUser
+	return tweets[user]
 }

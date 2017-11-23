@@ -10,6 +10,8 @@ import (
 
 func TestPublishedTweetIsSaved(t *testing.T) {
 
+	service.InitializeService()
+
 	var tweet *domain.Tweet
 
 	user := "grupoesfera"
@@ -32,6 +34,9 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 }
 
 func TestClean(t *testing.T) {
+
+	service.InitializeService()
+
 	var tweet2 *domain.Tweet
 
 	user2 := "grupoesfera"
