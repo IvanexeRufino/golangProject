@@ -52,10 +52,9 @@ func CleanTweet() {
 
 //GetTweetByID recibe
 func GetTweetByID(id int) *domain.Tweet {
-	var i int
-	for ; i < len(tweets); i++ {
-		if tweets[i].ID == id {
-			return tweets[i]
+	for _, tweet := range tweets {
+		if tweet.ID == id {
+			return tweet
 		}
 	}
 	return nil
@@ -64,8 +63,8 @@ func GetTweetByID(id int) *domain.Tweet {
 //CountTweetsByUser cuenta twees por usuario
 func CountTweetsByUser(user string) int {
 	contador := 0
-	for i := 0; i < len(tweets); i++ {
-		if tweets[i].User == user {
+	for _, tweet := range tweets {
+		if tweet.User == user {
 			contador++
 		}
 	}
@@ -76,8 +75,8 @@ func CountTweetsByUser(user string) int {
 func GetTweetsByUser(user string) []*domain.Tweet {
 	var tweetsByUser []*domain.Tweet
 	tweetsByUser = make([]*domain.Tweet, 0)
-	for i := 0; i < len(tweets); i++ {
-		if tweets[i].User == user {
+	for i, tweet := range tweets {
+		if tweet.User == user {
 			tweetsByUser = append(tweetsByUser, tweets[i])
 		}
 	}
