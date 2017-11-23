@@ -62,3 +62,15 @@ func CountTweetsByUser(user string) int {
 	}
 	return contador
 }
+
+//GetTweetsByUser return tweets by user
+func GetTweetsByUser(user string) []*domain.Tweet {
+	var tweetsByUser []*domain.Tweet
+	tweetsByUser = make([]*domain.Tweet, 0)
+	for i := 0; i < len(tweets); i++ {
+		if tweets[i].User == user {
+			tweetsByUser = append(tweetsByUser, tweets[i])
+		}
+	}
+	return tweetsByUser
+}
