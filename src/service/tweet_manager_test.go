@@ -10,7 +10,7 @@ import (
 
 func TestPublishedTweetIsSaved(t *testing.T) {
 
-	service.InitializeService()
+	tm := service.NewTweetManager()
 
 	var tweet *domain.Tweet
 
@@ -19,9 +19,9 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 
 	tweet = domain.NewTweet(user, text)
 
-	service.PublishTweet(tweet)
+	tm.PublishTweet(tweet)
 
-	publishedTweets := service.GetTweets()
+	publishedTweets := tm.GetTweets()
 
 	if publishedTweets[0].User != user && publishedTweets[0].Text != text {
 		t.Error("Expected tweet is", tweet)
@@ -35,7 +35,7 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 
 func TestClean(t *testing.T) {
 
-	service.InitializeService()
+	tm := service.NewTweetManager()
 
 	var tweet2 *domain.Tweet
 
@@ -43,17 +43,17 @@ func TestClean(t *testing.T) {
 	text2 := "This is my first tweet"
 	tweet2 = domain.NewTweet(user2, text2)
 
-	service.PublishTweet(tweet2)
-	service.CleanTweet()
+	tm.PublishTweet(tweet2)
+	tm.CleanTweet()
 
-	if service.GetTweets() != nil {
+	if tm.GetTweets() != nil {
 		t.Error("Expected tweet is", tweet2)
 	}
 }
 
 func TestGetLastTweetReturnsLastOne(t *testing.T) {
 
-	service.InitializeService()
+	tm := service.NewTweetManager()
 
 	var tweet, secondTweet *domain.Tweet
 
@@ -64,10 +64,10 @@ func TestGetLastTweetReturnsLastOne(t *testing.T) {
 	tweet = domain.NewTweet(user, text)
 	secondTweet = domain.NewTweet(user, secondText)
 
-	service.PublishTweet(tweet)
-	secondId, _ := service.PublishTweet(secondTweet)
+	tm.PublishTweet(tweet)
+	secondId, _ := tm.PublishTweet(secondTweet)
 
-	lastTweet := service.GetLastTweet()
+	lastTweet := tm.GetLastTweet()
 
 	if !isValidTweet(t, lastTweet, secondId, user, secondText) {
 		return
@@ -76,12 +76,15 @@ func TestGetLastTweetReturnsLastOne(t *testing.T) {
 }
 
 func TestTweetWithoutUserIsNotPublished(t *testing.T) {
+
+	tm := service.NewTweetManager()
+
 	var tweet *domain.Tweet
 	var user string
 	text := "this is my first tweet"
 	tweet = domain.NewTweet(user, text)
 	var err error
-	_, err = service.PublishTweet(tweet)
+	_, err = tm.PublishTweet(tweet)
 
 	if err != nil && err.Error() != "user is required" {
 		t.Error("User is required")
@@ -90,13 +93,16 @@ func TestTweetWithoutUserIsNotPublished(t *testing.T) {
 }
 
 func TestTweetWithoutTextIsNotPublished(t *testing.T) {
+
+	tm := service.NewTweetManager()
+
 	var tweet *domain.Tweet
 	user := "grupoesfera"
 	var text string
 
 	tweet = domain.NewTweet(user, text)
 	var err error
-	_, err = service.PublishTweet(tweet)
+	_, err = tm.PublishTweet(tweet)
 
 	if err == nil {
 		t.Error("Expected error")
@@ -109,6 +115,9 @@ func TestTweetWithoutTextIsNotPublished(t *testing.T) {
 }
 
 func TestTweetWhichExceeding140CharactersIsNotPublished(t *testing.T) {
+
+	tm := service.NewTweetManager()
+
 	var tweet *domain.Tweet
 
 	user := "grupoesfera"
@@ -117,7 +126,7 @@ func TestTweetWhichExceeding140CharactersIsNotPublished(t *testing.T) {
 	tweet = domain.NewTweet(user, text)
 
 	var err error
-	_, err = service.PublishTweet(tweet)
+	_, err = tm.PublishTweet(tweet)
 
 	if err == nil {
 		t.Error("Expected error")
@@ -131,7 +140,7 @@ func TestTweetWhichExceeding140CharactersIsNotPublished(t *testing.T) {
 
 func TestCanPublishAndRetrieveMoreThanOneTweet(t *testing.T) {
 
-	service.InitializeService()
+	tm := service.NewTweetManager()
 
 	var tweet, secondTweet *domain.Tweet
 
@@ -142,10 +151,10 @@ func TestCanPublishAndRetrieveMoreThanOneTweet(t *testing.T) {
 	tweet = domain.NewTweet(user, text)
 	secondTweet = domain.NewTweet(user, secondText)
 
-	service.PublishTweet(tweet)
-	service.PublishTweet(secondTweet)
+	tm.PublishTweet(tweet)
+	tm.PublishTweet(secondTweet)
 
-	publishedTweets := service.GetTweets()
+	publishedTweets := tm.GetTweets()
 
 	if len(publishedTweets) != 2 {
 
@@ -168,7 +177,7 @@ func TestCanPublishAndRetrieveMoreThanOneTweet(t *testing.T) {
 
 func TestCanRetrieveTweetById(t *testing.T) {
 
-	service.InitializeService()
+	tm := service.NewTweetManager()
 
 	var tweet *domain.Tweet
 	var id int
@@ -178,13 +187,13 @@ func TestCanRetrieveTweetById(t *testing.T) {
 
 	tweet = domain.NewTweet(user, text)
 
-	id, _ = service.PublishTweet(tweet)
+	id, _ = tm.PublishTweet(tweet)
 
-	publishedTweet := service.GetTweetByID(id)
+	publishedTweet := tm.GetTweetByID(id)
 
 	isValidTweet(t, publishedTweet, id, user, text)
 
-	publishedTweet2 := service.GetTweetByID(50)
+	publishedTweet2 := tm.GetTweetByID(50)
 
 	if publishedTweet2 != nil {
 		t.Errorf("Expected nil")
@@ -193,7 +202,7 @@ func TestCanRetrieveTweetById(t *testing.T) {
 
 func TestCanCountTheTweetsSentByAnUser(t *testing.T) {
 
-	service.InitializeService()
+	tm := service.NewTweetManager()
 
 	var tweet, secondTweet, thirdTweet *domain.Tweet
 
@@ -206,11 +215,11 @@ func TestCanCountTheTweetsSentByAnUser(t *testing.T) {
 	secondTweet = domain.NewTweet(user, secondText)
 	thirdTweet = domain.NewTweet(anotherUser, text)
 
-	service.PublishTweet(tweet)
-	service.PublishTweet(secondTweet)
-	service.PublishTweet(thirdTweet)
+	tm.PublishTweet(tweet)
+	tm.PublishTweet(secondTweet)
+	tm.PublishTweet(thirdTweet)
 
-	count := service.CountTweetsByUser(user)
+	count := tm.CountTweetsByUser(user)
 
 	if count != 2 {
 		t.Errorf("Expected count is 2 but was %d", count)
@@ -219,7 +228,7 @@ func TestCanCountTheTweetsSentByAnUser(t *testing.T) {
 
 func TestCanRetrieveTheTweetsSentByAnUser(t *testing.T) {
 
-	service.InitializeService()
+	tm := service.NewTweetManager()
 
 	var tweet, secondTweet, thirdTweet *domain.Tweet
 
@@ -232,11 +241,11 @@ func TestCanRetrieveTheTweetsSentByAnUser(t *testing.T) {
 	secondTweet = domain.NewTweet(user, secondText)
 	thirdTweet = domain.NewTweet(anotherUser, text)
 
-	firstId, _ := service.PublishTweet(tweet)
-	secondId, _ := service.PublishTweet(secondTweet)
-	service.PublishTweet(thirdTweet)
+	firstId, _ := tm.PublishTweet(tweet)
+	secondId, _ := tm.PublishTweet(secondTweet)
+	tm.PublishTweet(thirdTweet)
 
-	tweets := service.GetTweetsByUser(user)
+	tweets := tm.GetTweetsByUser(user)
 
 	if len(tweets) != 2 {
 
@@ -257,7 +266,8 @@ func TestCanRetrieveTheTweetsSentByAnUser(t *testing.T) {
 
 }
 func TestFollowuser(t *testing.T) {
-	service.InitializeService()
+
+	tm := service.NewTweetManager()
 
 	var tweet, secondTweet *domain.Tweet
 
@@ -269,13 +279,13 @@ func TestFollowuser(t *testing.T) {
 	tweet = domain.NewTweet(user, text)
 	secondTweet = domain.NewTweet(anotherUser, secondText)
 
-	firstId, _ := service.PublishTweet(tweet)
-	secondId, _ := service.PublishTweet(secondTweet)
+	firstId, _ := tm.PublishTweet(tweet)
+	secondId, _ := tm.PublishTweet(secondTweet)
 
-	service.Follow("grupoesfera", "nportas")
-	service.Follow("grupoesfera", "mercadolibre")
+	tm.Follow("grupoesfera", "nportas")
+	tm.Follow("grupoesfera", "mercadolibre")
 
-	timeline := service.GetTimeline("grupoesfera")
+	timeline := tm.GetTimeline("grupoesfera")
 
 	if len(timeline) != 2 {
 		t.Errorf("Expected size is 2 but was %d", len(timeline))
@@ -293,7 +303,7 @@ func TestFollowuser(t *testing.T) {
 		return
 	}
 
-	err := service.Follow("grupoesfera", "mas de lo mismo")
+	err := tm.Follow("grupoesfera", "mas de lo mismo")
 
 	if err == nil {
 		t.Errorf("Expected an error")
