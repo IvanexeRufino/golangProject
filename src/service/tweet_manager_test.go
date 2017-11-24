@@ -419,8 +419,7 @@ func TestFavouriteList(t *testing.T) {
 
 	tm.Fav(user, id)
 
-	userStruct := tm.GetUserByName(user)
-	favourites := userStruct.FavouriteTweets
+	favourites := tm.GetTweetsFav(user)
 
 	if len(favourites) != 1 {
 		t.Errorf("Expected a favourite tweet")
