@@ -265,51 +265,46 @@ func TestCanRetrieveTheTweetsSentByAnUser(t *testing.T) {
 	}
 
 }
-// func TestFollowuser(t *testing.T) {
 
-// 	tm := service.NewTweetManager()
+func TestFollowuser(t *testing.T) {
 
-// 	var tweet, secondTweet *domain.Tweet
+	tm := service.NewTweetManager()
 
-// 	user := "nportas"
-// 	anotherUser := "mercadolibre"
-// 	text := "This is my first tweet"
-// 	secondText := "This is my second tweet"
+	var tweet, secondTweet *domain.Tweet
 
-// 	tweet = domain.NewTweet(user, text)
-// 	secondTweet = domain.NewTweet(anotherUser, secondText)
+	user := "nportas"
+	anotherUser := "mercadolibre"
+	text := "This is my first tweet"
+	secondText := "This is my second tweet"
 
-// 	firstId, _ := tm.PublishTweet(tweet)
-// 	secondId, _ := tm.PublishTweet(secondTweet)
+	tweet = domain.NewTweet(user, text)
+	secondTweet = domain.NewTweet(anotherUser, secondText)
 
-// 	tm.Follow("grupoesfera", "nportas")
-// 	tm.Follow("grupoesfera", "mercadolibre")
+	firstId, _ := tm.PublishTweet(tweet)
+	tm.PublishTweet(secondTweet)
 
-// 	timeline := tm.GetTimeline("grupoesfera")
+	tm.Follow("nportas", "nportas")
 
-// 	if len(timeline) != 2 {
-// 		t.Errorf("Expected size is 2 but was %d", len(timeline))
-// 		return
-// 	}
+	timeline := tm.GetTimeline("nportas")
 
-// 	firstPublishedTweet := timeline[0]
-// 	secondPublishedTweet := timeline[1]
+	if len(timeline) != 1 {
+		t.Errorf("Expected size is 2 but was %d", len(timeline))
+		return
+	}
 
-// 	if !isValidTweet(t, firstPublishedTweet, firstId, user, text) {
-// 		return
-// 	}
+	firstPublishedTweet := timeline[0]
 
-// 	if !isValidTweet(t, secondPublishedTweet, secondId, user, secondText) {
-// 		return
-// 	}
+	if !isValidTweet(t, firstPublishedTweet, firstId, user, text) {
+		return
+	}
 
-// 	err := tm.Follow("grupoesfera", "mas de lo mismo")
+	err := tm.Follow("grupoesfera", "mas de lo mismo")
 
-// 	if err == nil {
-// 		t.Errorf("Expected an error")
-// 	}
+	if err == nil {
+		t.Errorf("Expected an error")
+	}
 
-// }
+}
 
 func isValidTweet(t *testing.T, tweet *domain.Tweet, id int, user, text string) bool {
 

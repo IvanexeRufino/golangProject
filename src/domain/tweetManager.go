@@ -107,12 +107,12 @@ func (tm *TweetManager) Follow(follower, user string) error {
 	return err
 }
 
-// //GetTimeline returns followers published tweets
-// func (tm *TweetManager) GetTimeline(user string) []*Tweet {
-// 	followedUsers := tm.Followers[user]
-// 	var listOfTweets []*Tweet
-// 	for _, users := range followedUsers {
-// 		listOfTweets = append(listOfTweets, tm.Tweets[users]...)
-// 	}
-// 	return listOfTweets
-// }
+//GetTimeline returns followers published tweets
+func (tm *TweetManager) GetTimeline(user string) []*Tweet {
+	followedUsers := tm.GetUserByName(user).Followeds
+	var listOfTweets []*Tweet
+	for _, users := range followedUsers {
+		listOfTweets = append(listOfTweets, tm.Tweets[users]...)
+	}
+	return listOfTweets
+}

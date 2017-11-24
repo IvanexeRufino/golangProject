@@ -135,25 +135,25 @@ func main() {
 		},
 	})
 
-	// shell.AddCmd(&ishell.Cmd{
-	// 	Name: "showTimeline",
-	// 	Help: "Shows published tweets that you  might be interested in",
-	// 	Func: func(c *ishell.Context) {
+	shell.AddCmd(&ishell.Cmd{
+		Name: "showTimeline",
+		Help: "Shows published tweets that you  might be interested in",
+		Func: func(c *ishell.Context) {
 
-	// 		c.Print("Enter your username: ")
-	// 		user := c.ReadLine()
-	// 		listofTweets := tm.GetTimeline(user)
+			c.Print("Enter your username: ")
+			user := c.ReadLine()
+			listofTweets := tm.GetTimeline(user)
 
-	// 		if len(listofTweets) != 0 {
-	// 			for i := 0; i < len(listofTweets); i++ {
-	// 				c.Println(listofTweets[i])
-	// 			}
-	// 		} else {
-	// 			c.Println("Users you follow havent published yet")
-	// 		}
-	// 		return
-	// 	},
-	// })
+			if len(listofTweets) != 0 {
+				for i := 0; i < len(listofTweets); i++ {
+					c.Println(listofTweets[i])
+				}
+			} else {
+				c.Println("Users you follow havent published yet")
+			}
+			return
+		},
+	})
 
 	shell.AddCmd(&ishell.Cmd{
 		Name: "showUsers",
