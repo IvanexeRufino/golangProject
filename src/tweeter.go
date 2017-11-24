@@ -239,5 +239,20 @@ func main() {
 		},
 	})
 
+	shell.AddCmd(&ishell.Cmd{
+		Name: "getTrendingTopics",
+		Help: "Retrieve most your works",
+		Func: func(c *ishell.Context) {
+
+			c.Print("the TrendingTopic  are the following: ")
+
+			listOfDMs := tm.GetTrendingTopics()
+
+			c.Println(listOfDMs)
+
+			return
+		},
+	})
+
 	shell.Run()
 }

@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	"strings"
 )
 
 //TweetManager struct
@@ -9,6 +10,17 @@ type TweetManager struct {
 	Tweets    map[string][]*Tweet
 	LastTweet *Tweet
 	Users     []*User
+	TTs       map[string]int
+}
+
+//
+func (tm *TweetManager) iterateTweetForTTs(tweet *Tweet) {
+
+	listOfWords := strings.Fields(tweet.Text)
+	for _, word := range listOfWords {
+		tm.TTs[word] = tm.TTs[word] + 1
+	}
+
 }
 
 //PublishTweet qe hace nada
@@ -28,6 +40,7 @@ func (tm *TweetManager) PublishTweet(tweet2 *Tweet) (int, error) {
 		}
 		tm.Tweets[tweet2.User] = append(tm.Tweets[tweet2.User], tweet2)
 		tm.LastTweet = tweet2
+		tm.iterateTweetForTTs(tweet2)
 	}
 
 	return tweet2.ID, err
@@ -38,7 +51,7 @@ func (tm *TweetManager) InitializeService() {
 	tm.Tweets = make(map[string][]*Tweet)
 	tm.LastTweet = nil
 	tm.Users = make([]*User, 0)
-
+	tm.TTs = make(map[string]int)
 }
 
 //GetTweets getter
@@ -150,9 +163,34 @@ func (tm *TweetManager) GetUnreadedMessages(name string) []*DirectMessage {
 	for _, dm := range user.DirectMessages {
 		if !dm.Readed {
 			unreaded = append(unreaded, dm)
+			dm.Readed = true
 		}
 	}
 
 	return unreaded
 
+}
+
+//GetTrendingTopics get more used words
+func (tm *TweetManager) GetTrendingTopics() []string {
+
+	var listOfCounters []int
+	listOfCounters = make([]int, 0)
+	mayor := 0
+	segundoMayor := 0
+	var trendings []string
+	trendings = make([]string, 2)
+
+	for k, v := range tm.TTs {
+		listOfCounters = append(listOfCounters, v)
+		if v > mayor {
+			mayor = v
+			trendings[0] = k
+		} else if v > segundoMayor {
+			segundoMayor = v
+			trendings[1] = k
+		}
+	}
+
+	return trendings
 }

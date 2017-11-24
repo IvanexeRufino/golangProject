@@ -355,6 +355,30 @@ func TestSendMessageToUser(t *testing.T) {
 
 }
 
+func TestTrendingTopicsAreTheMoreTweeted(t *testing.T) {
+
+	tm := service.NewTweetManager()
+
+	var tweet, secondTweet *domain.Tweet
+
+	user := "nportas"
+	anotherUser := "mercadolibre"
+	text := "This is my first tweet"
+	secondText := "This was his second tweet"
+
+	tweet = domain.NewTweet(user, text)
+	secondTweet = domain.NewTweet(anotherUser, secondText)
+
+	tm.PublishTweet(tweet)
+	tm.PublishTweet(secondTweet)
+
+	tts := tm.GetTrendingTopics()
+
+	if tts[0] != "This" && tts[1] != "tweet" {
+		t.Errorf("Expected this and tweet but was %s and %s", tts[0], tts[1])
+	}
+}
+
 func isValidTweet(t *testing.T, tweet *domain.Tweet, id int, user, text string) bool {
 
 	if tweet.User != user && tweet.Text != text && tweet.ID != id {
