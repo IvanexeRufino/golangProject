@@ -4,7 +4,7 @@ package domain
 type DirectMessage struct {
 	From    string
 	Message string
-	readed  bool
+	Readed  bool
 }
 
 //NewDirectMessage crea un tweet

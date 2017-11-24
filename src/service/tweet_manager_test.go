@@ -325,9 +325,23 @@ func TestSendMessageToUser(t *testing.T) {
 
 	tm.SendMessage(user, anotherUser, "hola wachin")
 
-	messages := tm.GetAllDirectMessages(anotherUser)
+	messages := tm.GetUnreadedMessages(anotherUser)
 
 	if len(messages) != 1 {
+		t.Errorf("Expected size is 1 but was %d", len(messages))
+		return
+	}
+
+	messagesReadeds := tm.GetAllDirectMessages(anotherUser)
+
+	if len(messagesReadeds) != 1 {
+		t.Errorf("Expected size is 1 but was %d", len(messages))
+		return
+	}
+
+	messagesUnreadeds := tm.GetUnreadedMessages(anotherUser)
+
+	if len(messagesUnreadeds) != 0 {
 		t.Errorf("Expected size is 1 but was %d", len(messages))
 		return
 	}

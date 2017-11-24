@@ -135,5 +135,24 @@ func (tm *TweetManager) SendMessage(from, to, message string) error {
 //GetAllDirectMessages return direct messages from user
 func (tm *TweetManager) GetAllDirectMessages(name string) []*DirectMessage {
 	user := tm.GetUserByName(name)
+	for _, dm := range user.DirectMessages {
+		dm.Readed = true
+	}
 	return user.DirectMessages
+}
+
+//GetUnreadedMessages return direct messages unreadeds
+func (tm *TweetManager) GetUnreadedMessages(name string) []*DirectMessage {
+
+	var unreaded []*DirectMessage
+	unreaded = make([]*DirectMessage, 0)
+	user := tm.GetUserByName(name)
+	for _, dm := range user.DirectMessages {
+		if !dm.Readed {
+			unreaded = append(unreaded, dm)
+		}
+	}
+
+	return unreaded
+
 }
