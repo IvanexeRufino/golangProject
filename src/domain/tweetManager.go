@@ -8,7 +8,7 @@ import (
 type TweetManager struct {
 	Tweets    map[string][]*Tweet
 	LastTweet *Tweet
-	Followers map[string][]string
+	Users     []*User
 }
 
 //PublishTweet qe hace nada
@@ -21,10 +21,14 @@ func (tm *TweetManager) PublishTweet(tweet2 *Tweet) (int, error) {
 	} else if len(tweet2.Text) > 140 {
 		err = fmt.Errorf("text exceeds 140 characters")
 	} else {
+		_, ok := tm.Tweets[tweet2.User]
+		if !ok {
+			usuarioNuevo := NewUser(tweet2.User)
+			tm.Users = append(tm.Users, usuarioNuevo)
+		}
 		tm.Tweets[tweet2.User] = append(tm.Tweets[tweet2.User], tweet2)
+		tm.LastTweet = tweet2
 	}
-
-	tm.LastTweet = tweet2
 
 	return tweet2.ID, err
 }
@@ -33,7 +37,7 @@ func (tm *TweetManager) PublishTweet(tweet2 *Tweet) (int, error) {
 func (tm *TweetManager) InitializeService() {
 	tm.Tweets = make(map[string][]*Tweet)
 	tm.LastTweet = nil
-	tm.Followers = make(map[string][]string)
+	tm.Users = make([]*User, 0)
 
 }
 
@@ -77,24 +81,24 @@ func (tm *TweetManager) GetTweetsByUser(user string) []*Tweet {
 	return tm.Tweets[user]
 }
 
-//Follow follows
-func (tm *TweetManager) Follow(follower, user string) error {
-	var err error
-	_, ok := tm.Tweets[user]
-	if ok {
-		tm.Followers[follower] = append(tm.Followers[follower], user)
-	} else {
-		err = fmt.Errorf("user doesnt exist")
-	}
-	return err
-}
+// //Follow follows
+// func (tm *TweetManager) Follow(follower, user string) error {
+// 	var err error
+// 	_, ok := tm.Tweets[user]
+// 	if ok {
+// 		tm.Followers[follower] = append(tm.Followers[follower], user)
+// 	} else {
+// 		err = fmt.Errorf("user doesnt exist")
+// 	}
+// 	return err
+// }
 
-//GetTimeline returns followers published tweets
-func (tm *TweetManager) GetTimeline(user string) []*Tweet {
-	followedUsers := tm.Followers[user]
-	var listOfTweets []*Tweet
-	for _, users := range followedUsers {
-		listOfTweets = append(listOfTweets, tm.Tweets[users]...)
-	}
-	return listOfTweets
-}
+// //GetTimeline returns followers published tweets
+// func (tm *TweetManager) GetTimeline(user string) []*Tweet {
+// 	followedUsers := tm.Followers[user]
+// 	var listOfTweets []*Tweet
+// 	for _, users := range followedUsers {
+// 		listOfTweets = append(listOfTweets, tm.Tweets[users]...)
+// 	}
+// 	return listOfTweets
+// }

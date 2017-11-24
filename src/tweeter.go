@@ -115,41 +115,59 @@ func main() {
 		},
 	})
 
+	// shell.AddCmd(&ishell.Cmd{
+	// 	Name: "followUser",
+	// 	Help: "Enter a user you want to follow",
+	// 	Func: func(c *ishell.Context) {
+
+	// 		defer c.ShowPrompt(true)
+	// 		c.Print("Enter your username: ")
+	// 		user := c.ReadLine()
+	// 		c.Print("Enter a username you want to follow: ")
+	// 		usertoFollow := c.ReadLine()
+	// 		err := tm.Follow(user, usertoFollow)
+	// 		if err == nil {
+	// 			c.Println("You are now following ", usertoFollow)
+	// 		} else {
+	// 			c.Println("That user doesnt exist")
+	// 		}
+	// 		return
+	// 	},
+	// })
+
+	// shell.AddCmd(&ishell.Cmd{
+	// 	Name: "showTimeline",
+	// 	Help: "Shows published tweets that you  might be interested in",
+	// 	Func: func(c *ishell.Context) {
+
+	// 		c.Print("Enter your username: ")
+	// 		user := c.ReadLine()
+	// 		listofTweets := tm.GetTimeline(user)
+
+	// 		if len(listofTweets) != 0 {
+	// 			for i := 0; i < len(listofTweets); i++ {
+	// 				c.Println(listofTweets[i])
+	// 			}
+	// 		} else {
+	// 			c.Println("Users you follow havent published yet")
+	// 		}
+	// 		return
+	// 	},
+	// })
+
 	shell.AddCmd(&ishell.Cmd{
-		Name: "followUser",
-		Help: "Enter a user you want to follow",
+		Name: "showUsers",
+		Help: "Shows registered users",
 		Func: func(c *ishell.Context) {
 
-			defer c.ShowPrompt(true)
-			c.Print("Enter your username: ")
-			user := c.ReadLine()
-			c.Print("Enter a username you want to follow: ")
-			usertoFollow := c.ReadLine()
-			err := tm.Follow(user, usertoFollow)
-			if err == nil {
-				c.Println("You are now following ", usertoFollow)
-			} else {
-				c.Println("That user doesnt exist")
-			}
-			return
-		},
-	})
+			listofUsers := tm.Users
 
-	shell.AddCmd(&ishell.Cmd{
-		Name: "showTimeline",
-		Help: "Shows published tweets that you  might be interested in",
-		Func: func(c *ishell.Context) {
-
-			c.Print("Enter your username: ")
-			user := c.ReadLine()
-			listofTweets := tm.GetTimeline(user)
-
-			if len(listofTweets) != 0 {
-				for i := 0; i < len(listofTweets); i++ {
-					c.Println(listofTweets[i])
+			if len(listofUsers) != 0 {
+				for i := 0; i < len(listofUsers); i++ {
+					c.Println(listofUsers[i])
 				}
 			} else {
-				c.Println("Users you follow havent published yet")
+				c.Println("There isnt any user registered yet")
 			}
 			return
 		},
