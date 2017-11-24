@@ -6,9 +6,9 @@ import (
 
 //TweetManager struct
 type TweetManager struct {
-	tweets    map[string][]*Tweet
-	lastTweet *Tweet
-	followers map[string][]string
+	Tweets    map[string][]*Tweet
+	LastTweet *Tweet
+	Followers map[string][]string
 }
 
 //PublishTweet qe hace nada
@@ -21,26 +21,26 @@ func (tm *TweetManager) PublishTweet(tweet2 *Tweet) (int, error) {
 	} else if len(tweet2.Text) > 140 {
 		err = fmt.Errorf("text exceeds 140 characters")
 	} else {
-		tm.tweets[tweet2.User] = append(tm.tweets[tweet2.User], tweet2)
+		tm.Tweets[tweet2.User] = append(tm.Tweets[tweet2.User], tweet2)
 	}
 
-	tm.lastTweet = tweet2
+	tm.LastTweet = tweet2
 
 	return tweet2.ID, err
 }
 
 //InitializeService aloca espacio
 func (tm *TweetManager) InitializeService() {
-	tm.tweets = make(map[string][]*Tweet)
-	tm.lastTweet = nil
-	tm.followers = make(map[string][]string)
+	tm.Tweets = make(map[string][]*Tweet)
+	tm.LastTweet = nil
+	tm.Followers = make(map[string][]string)
 
 }
 
 //GetTweets getter
 func (tm *TweetManager) GetTweets() []*Tweet {
 	var listOfTweets []*Tweet
-	for _, listTweet := range tm.tweets {
+	for _, listTweet := range tm.Tweets {
 		listOfTweets = append(listOfTweets, listTweet...)
 	}
 	return listOfTweets
@@ -48,12 +48,12 @@ func (tm *TweetManager) GetTweets() []*Tweet {
 
 //GetLastTweet return last tweet
 func (tm *TweetManager) GetLastTweet() *Tweet {
-	return tm.lastTweet
+	return tm.LastTweet
 }
 
 //CleanTweet limpia el texto
 func (tm *TweetManager) CleanTweet() {
-	tm.tweets = nil
+	tm.Tweets = nil
 	tm.InitializeService()
 }
 
@@ -69,20 +69,20 @@ func (tm *TweetManager) GetTweetByID(id int) *Tweet {
 
 //CountTweetsByUser cuenta twees por usuario
 func (tm *TweetManager) CountTweetsByUser(user string) int {
-	return len(tm.tweets[user])
+	return len(tm.Tweets[user])
 }
 
 //GetTweetsByUser return tweets by user
 func (tm *TweetManager) GetTweetsByUser(user string) []*Tweet {
-	return tm.tweets[user]
+	return tm.Tweets[user]
 }
 
 //Follow follows
 func (tm *TweetManager) Follow(follower, user string) error {
 	var err error
-	_, ok := tm.tweets[user]
+	_, ok := tm.Tweets[user]
 	if ok {
-		tm.followers[follower] = append(tm.followers[follower], user)
+		tm.Followers[follower] = append(tm.Followers[follower], user)
 	} else {
 		err = fmt.Errorf("user doesnt exist")
 	}
@@ -91,10 +91,10 @@ func (tm *TweetManager) Follow(follower, user string) error {
 
 //GetTimeline returns followers published tweets
 func (tm *TweetManager) GetTimeline(user string) []*Tweet {
-	followedUsers := tm.followers[user]
+	followedUsers := tm.Followers[user]
 	var listOfTweets []*Tweet
 	for _, users := range followedUsers {
-		listOfTweets = append(listOfTweets, tm.tweets[users]...)
+		listOfTweets = append(listOfTweets, tm.Tweets[users]...)
 	}
 	return listOfTweets
 }
