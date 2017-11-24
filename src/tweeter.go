@@ -115,25 +115,25 @@ func main() {
 		},
 	})
 
-	// shell.AddCmd(&ishell.Cmd{
-	// 	Name: "followUser",
-	// 	Help: "Enter a user you want to follow",
-	// 	Func: func(c *ishell.Context) {
+	shell.AddCmd(&ishell.Cmd{
+		Name: "followUser",
+		Help: "Enter a user you want to follow",
+		Func: func(c *ishell.Context) {
 
-	// 		defer c.ShowPrompt(true)
-	// 		c.Print("Enter your username: ")
-	// 		user := c.ReadLine()
-	// 		c.Print("Enter a username you want to follow: ")
-	// 		usertoFollow := c.ReadLine()
-	// 		err := tm.Follow(user, usertoFollow)
-	// 		if err == nil {
-	// 			c.Println("You are now following ", usertoFollow)
-	// 		} else {
-	// 			c.Println("That user doesnt exist")
-	// 		}
-	// 		return
-	// 	},
-	// })
+			defer c.ShowPrompt(true)
+			c.Print("Enter your username: ")
+			user := c.ReadLine()
+			c.Print("Enter a username you want to follow: ")
+			usertoFollow := c.ReadLine()
+			err := tm.Follow(user, usertoFollow)
+			if err == nil {
+				c.Println("You are now following ", usertoFollow)
+			} else {
+				c.Println("That user doesnt exist")
+			}
+			return
+		},
+	})
 
 	// shell.AddCmd(&ishell.Cmd{
 	// 	Name: "showTimeline",

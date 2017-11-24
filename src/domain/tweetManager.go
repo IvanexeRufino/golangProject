@@ -81,17 +81,31 @@ func (tm *TweetManager) GetTweetsByUser(user string) []*Tweet {
 	return tm.Tweets[user]
 }
 
-// //Follow follows
-// func (tm *TweetManager) Follow(follower, user string) error {
-// 	var err error
-// 	_, ok := tm.Tweets[user]
-// 	if ok {
-// 		tm.Followers[follower] = append(tm.Followers[follower], user)
-// 	} else {
-// 		err = fmt.Errorf("user doesnt exist")
-// 	}
-// 	return err
-// }
+//GetUserByName get user by name
+func (tm *TweetManager) GetUserByName(name string) *User {
+	var userFound *User
+	for _, user := range tm.Users {
+		if user.Name == name {
+			userFound = user
+		}
+	}
+
+	return userFound
+}
+
+//Follow follows
+func (tm *TweetManager) Follow(follower, user string) error {
+	var err error
+	userFound := tm.GetUserByName(user)
+	userFollower := tm.GetUserByName(follower)
+
+	if userFound != nil && userFollower != nil {
+		userFollower.Followeds = append(userFollower.Followeds, user)
+	} else {
+		err = fmt.Errorf("User doesnt exist")
+	}
+	return err
+}
 
 // //GetTimeline returns followers published tweets
 // func (tm *TweetManager) GetTimeline(user string) []*Tweet {
