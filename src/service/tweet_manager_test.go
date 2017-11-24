@@ -121,7 +121,8 @@ func TestTweetWhichExceeding140CharactersIsNotPublished(t *testing.T) {
 	var tweet *domain.Tweet
 
 	user := "grupoesfera"
-	text := "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+	text := `AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA`
 
 	tweet = domain.NewTweet(user, text)
 
@@ -335,14 +336,14 @@ func TestSendMessageToUser(t *testing.T) {
 	messagesReadeds := tm.GetAllDirectMessages(anotherUser)
 
 	if len(messagesReadeds) != 1 {
-		t.Errorf("Expected size is 1 but was %d", len(messages))
+		t.Errorf("Expected size is 1 but was %d", len(messagesReadeds))
 		return
 	}
 
 	messagesUnreadeds := tm.GetUnreadedMessages(anotherUser)
 
 	if len(messagesUnreadeds) != 0 {
-		t.Errorf("Expected size is 1 but was %d", len(messages))
+		t.Errorf("Expected size is 0 but was %d", len(messagesUnreadeds))
 		return
 	}
 

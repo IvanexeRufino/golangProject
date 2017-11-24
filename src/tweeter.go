@@ -195,5 +195,49 @@ func main() {
 		},
 	})
 
+	shell.AddCmd(&ishell.Cmd{
+		Name: "showAllDirectMessage",
+		Help: "Get all messages from a user",
+		Func: func(c *ishell.Context) {
+
+			c.Print("Enter your username: ")
+			user := c.ReadLine()
+
+			listOfDMs := tm.GetAllDirectMessages(user)
+
+			if len(listOfDMs) != 0 {
+				for i := 0; i < len(listOfDMs); i++ {
+					c.Println(listOfDMs[i])
+				}
+			} else {
+				c.Println("There isnt message registered yet")
+			}
+
+			return
+		},
+	})
+
+	shell.AddCmd(&ishell.Cmd{
+		Name: "showUnreadedMessage",
+		Help: "Get all unreaded messages from a user",
+		Func: func(c *ishell.Context) {
+
+			c.Print("Enter your username: ")
+			user := c.ReadLine()
+
+			listOfDMs := tm.GetUnreadedMessages(user)
+
+			if len(listOfDMs) != 0 {
+				for i := 0; i < len(listOfDMs); i++ {
+					c.Println(listOfDMs[i])
+				}
+			} else {
+				c.Println("There isnt any unreaded message registered yet")
+			}
+
+			return
+		},
+	})
+
 	shell.Run()
 }
