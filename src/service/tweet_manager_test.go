@@ -288,7 +288,7 @@ func TestFollowuser(t *testing.T) {
 	timeline := tm.GetTimeline("nportas")
 
 	if len(timeline) != 1 {
-		t.Errorf("Expected size is 2 but was %d", len(timeline))
+		t.Errorf("Expected size is 1 but was %d", len(timeline))
 		return
 	}
 
@@ -299,6 +299,40 @@ func TestFollowuser(t *testing.T) {
 	}
 
 	err := tm.Follow("grupoesfera", "mas de lo mismo")
+
+	if err == nil {
+		t.Errorf("Expected an error")
+	}
+
+}
+
+func TestSendMessageToUser(t *testing.T) {
+
+	tm := service.NewTweetManager()
+
+	var tweet, secondTweet *domain.Tweet
+
+	user := "nportas"
+	anotherUser := "mercadolibre"
+	text := "This is my first tweet"
+	secondText := "This is my second tweet"
+
+	tweet = domain.NewTweet(user, text)
+	secondTweet = domain.NewTweet(anotherUser, secondText)
+
+	tm.PublishTweet(tweet)
+	tm.PublishTweet(secondTweet)
+
+	tm.SendMessage(user, anotherUser, "hola wachin")
+
+	messages := tm.GetAllDirectMessages(anotherUser)
+
+	if len(messages) != 1 {
+		t.Errorf("Expected size is 1 but was %d", len(messages))
+		return
+	}
+
+	err := tm.SendMessage(user, "mas de lo mismo", "otra cosa")
 
 	if err == nil {
 		t.Errorf("Expected an error")

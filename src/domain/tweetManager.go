@@ -118,8 +118,22 @@ func (tm *TweetManager) GetTimeline(user string) []*Tweet {
 }
 
 //SendMessage send a message
-func (tm *TweetManager) SendMessage(from, to, message string) {
-	dm := NewDirectMessage(from, message)
-	user := tm.GetUserByName(to)
-	user.DirectMessages = append(user.DirectMessages, dm)
+func (tm *TweetManager) SendMessage(from, to, message string) error {
+	var err error
+
+	if tm.GetUserByName(from) != nil && tm.GetUserByName(to) != nil {
+		dm := NewDirectMessage(from, message)
+		user := tm.GetUserByName(to)
+		user.DirectMessages = append(user.DirectMessages, dm)
+	} else {
+		err = fmt.Errorf("User doesnt exist")
+	}
+
+	return err
+}
+
+//GetAllDirectMessages return direct messages from user
+func (tm *TweetManager) GetAllDirectMessages(name string) []*DirectMessage {
+	user := tm.GetUserByName(name)
+	return user.DirectMessages
 }
