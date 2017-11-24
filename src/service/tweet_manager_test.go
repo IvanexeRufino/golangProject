@@ -12,36 +12,35 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 
 	tm := service.NewTweetManager()
 
-	var tweet *domain.Tweet
+	var tweet *domain.TextTweet
 
 	user := "grupoesfera"
 	text := "This is my first tweet"
 
-	tweet = domain.NewTweet(user, text)
+	tweet = domain.NewTextTweet(user, text)
 
 	tm.PublishTweet(tweet)
 
 	publishedTweets := tm.GetTweets()
 
-	if publishedTweets[0].User != user && publishedTweets[0].Text != text {
+	if publishedTweets[0].GetUser() != user && publishedTweets[0].GetText() != text {
 		t.Error("Expected tweet is", tweet)
 	}
 
-	if publishedTweets[0].Date == nil {
+	if publishedTweets[0].GetDate() == nil {
 		t.Error("Expected a date")
 	}
 
 }
-
 func TestClean(t *testing.T) {
 
 	tm := service.NewTweetManager()
 
-	var tweet2 *domain.Tweet
+	var tweet2 domain.Tweet
 
 	user2 := "grupoesfera"
 	text2 := "This is my first tweet"
-	tweet2 = domain.NewTweet(user2, text2)
+	tweet2 = domain.NewTextTweet(user2, text2)
 
 	tm.PublishTweet(tweet2)
 	tm.CleanTweet()
@@ -55,14 +54,14 @@ func TestGetLastTweetReturnsLastOne(t *testing.T) {
 
 	tm := service.NewTweetManager()
 
-	var tweet, secondTweet *domain.Tweet
+	var tweet, secondTweet domain.Tweet
 
 	user := "grupoesfera"
 	text := "This is my first tweet"
 	secondText := "This is my second tweet"
 
-	tweet = domain.NewTweet(user, text)
-	secondTweet = domain.NewTweet(user, secondText)
+	tweet = domain.NewTextTweet(user, text)
+	secondTweet = domain.NewTextTweet(user, secondText)
 
 	tm.PublishTweet(tweet)
 	secondId, _ := tm.PublishTweet(secondTweet)
@@ -79,10 +78,10 @@ func TestTweetWithoutUserIsNotPublished(t *testing.T) {
 
 	tm := service.NewTweetManager()
 
-	var tweet *domain.Tweet
+	var tweet domain.Tweet
 	var user string
 	text := "this is my first tweet"
-	tweet = domain.NewTweet(user, text)
+	tweet = domain.NewTextTweet(user, text)
 	var err error
 	_, err = tm.PublishTweet(tweet)
 
@@ -96,11 +95,11 @@ func TestTweetWithoutTextIsNotPublished(t *testing.T) {
 
 	tm := service.NewTweetManager()
 
-	var tweet *domain.Tweet
+	var tweet domain.Tweet
 	user := "grupoesfera"
 	var text string
 
-	tweet = domain.NewTweet(user, text)
+	tweet = domain.NewTextTweet(user, text)
 	var err error
 	_, err = tm.PublishTweet(tweet)
 
@@ -118,13 +117,13 @@ func TestTweetWhichExceeding140CharactersIsNotPublished(t *testing.T) {
 
 	tm := service.NewTweetManager()
 
-	var tweet *domain.Tweet
+	var tweet domain.Tweet
 
 	user := "grupoesfera"
 	text := `AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 			AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA`
 
-	tweet = domain.NewTweet(user, text)
+	tweet = domain.NewTextTweet(user, text)
 
 	var err error
 	_, err = tm.PublishTweet(tweet)
@@ -143,14 +142,14 @@ func TestCanPublishAndRetrieveMoreThanOneTweet(t *testing.T) {
 
 	tm := service.NewTweetManager()
 
-	var tweet, secondTweet *domain.Tweet
+	var tweet, secondTweet domain.Tweet
 
 	user := "grupoesfera"
 	text := "This is my first tweet"
 	secondText := "This is my second tweet"
 
-	tweet = domain.NewTweet(user, text)
-	secondTweet = domain.NewTweet(user, secondText)
+	tweet = domain.NewTextTweet(user, text)
+	secondTweet = domain.NewTextTweet(user, secondText)
 
 	tm.PublishTweet(tweet)
 	tm.PublishTweet(secondTweet)
@@ -166,11 +165,11 @@ func TestCanPublishAndRetrieveMoreThanOneTweet(t *testing.T) {
 	firstPublishedTweet := publishedTweets[0]
 	secondPublishedTweet := publishedTweets[1]
 
-	if !isValidTweet(t, firstPublishedTweet, firstPublishedTweet.ID, user, text) {
+	if !isValidTweet(t, firstPublishedTweet, firstPublishedTweet.GetID(), user, text) {
 		return
 	}
 
-	if !isValidTweet(t, secondPublishedTweet, secondPublishedTweet.ID, user, secondText) {
+	if !isValidTweet(t, secondPublishedTweet, secondPublishedTweet.GetID(), user, secondText) {
 		return
 	}
 
@@ -180,13 +179,13 @@ func TestCanRetrieveTweetById(t *testing.T) {
 
 	tm := service.NewTweetManager()
 
-	var tweet *domain.Tweet
+	var tweet domain.Tweet
 	var id int
 
 	user := "grupoesfera"
 	text := "This is my first tweet"
 
-	tweet = domain.NewTweet(user, text)
+	tweet = domain.NewTextTweet(user, text)
 
 	id, _ = tm.PublishTweet(tweet)
 
@@ -205,16 +204,16 @@ func TestCanCountTheTweetsSentByAnUser(t *testing.T) {
 
 	tm := service.NewTweetManager()
 
-	var tweet, secondTweet, thirdTweet *domain.Tweet
+	var tweet, secondTweet, thirdTweet domain.Tweet
 
 	user := "grupoesfera"
 	anotherUser := "nick"
 	text := "This is my first tweet"
 	secondText := "This is my second tweet"
 
-	tweet = domain.NewTweet(user, text)
-	secondTweet = domain.NewTweet(user, secondText)
-	thirdTweet = domain.NewTweet(anotherUser, text)
+	tweet = domain.NewTextTweet(user, text)
+	secondTweet = domain.NewTextTweet(user, secondText)
+	thirdTweet = domain.NewTextTweet(anotherUser, text)
 
 	tm.PublishTweet(tweet)
 	tm.PublishTweet(secondTweet)
@@ -231,16 +230,16 @@ func TestCanRetrieveTheTweetsSentByAnUser(t *testing.T) {
 
 	tm := service.NewTweetManager()
 
-	var tweet, secondTweet, thirdTweet *domain.Tweet
+	var tweet, secondTweet, thirdTweet domain.Tweet
 
 	user := "grupoesfera"
 	anotherUser := "nick"
 	text := "This is my first tweet"
 	secondText := "This is my second tweet"
 
-	tweet = domain.NewTweet(user, text)
-	secondTweet = domain.NewTweet(user, secondText)
-	thirdTweet = domain.NewTweet(anotherUser, text)
+	tweet = domain.NewTextTweet(user, text)
+	secondTweet = domain.NewTextTweet(user, secondText)
+	thirdTweet = domain.NewTextTweet(anotherUser, text)
 
 	firstId, _ := tm.PublishTweet(tweet)
 	secondId, _ := tm.PublishTweet(secondTweet)
@@ -271,15 +270,15 @@ func TestFollowuser(t *testing.T) {
 
 	tm := service.NewTweetManager()
 
-	var tweet, secondTweet *domain.Tweet
+	var tweet, secondTweet domain.Tweet
 
 	user := "nportas"
 	anotherUser := "mercadolibre"
 	text := "This is my first tweet"
 	secondText := "This is my second tweet"
 
-	tweet = domain.NewTweet(user, text)
-	secondTweet = domain.NewTweet(anotherUser, secondText)
+	tweet = domain.NewTextTweet(user, text)
+	secondTweet = domain.NewTextTweet(anotherUser, secondText)
 
 	firstId, _ := tm.PublishTweet(tweet)
 	tm.PublishTweet(secondTweet)
@@ -311,15 +310,15 @@ func TestSendMessageToUser(t *testing.T) {
 
 	tm := service.NewTweetManager()
 
-	var tweet, secondTweet *domain.Tweet
+	var tweet, secondTweet domain.Tweet
 
 	user := "nportas"
 	anotherUser := "mercadolibre"
 	text := "This is my first tweet"
 	secondText := "This is my second tweet"
 
-	tweet = domain.NewTweet(user, text)
-	secondTweet = domain.NewTweet(anotherUser, secondText)
+	tweet = domain.NewTextTweet(user, text)
+	secondTweet = domain.NewTextTweet(anotherUser, secondText)
 
 	tm.PublishTweet(tweet)
 	tm.PublishTweet(secondTweet)
@@ -354,19 +353,20 @@ func TestSendMessageToUser(t *testing.T) {
 	}
 
 }
+
 func TestTrendingTopicsAreTheMoreTweeted(t *testing.T) {
 
 	tm := service.NewTweetManager()
 
-	var tweet, secondTweet *domain.Tweet
+	var tweet, secondTweet domain.Tweet
 
 	user := "nportas"
 	anotherUser := "mercadolibre"
 	text := "This is my first tweet"
 	secondText := "This was his second tweet"
 
-	tweet = domain.NewTweet(user, text)
-	secondTweet = domain.NewTweet(anotherUser, secondText)
+	tweet = domain.NewTextTweet(user, text)
+	secondTweet = domain.NewTextTweet(anotherUser, secondText)
 
 	tm.PublishTweet(tweet)
 	tm.PublishTweet(secondTweet)
@@ -377,18 +377,19 @@ func TestTrendingTopicsAreTheMoreTweeted(t *testing.T) {
 		t.Errorf("Expected this and tweet but was %s and %s", tts[0], tts[1])
 	}
 }
+
 func TestRetweetearAddsToTweets(t *testing.T) {
 	tm := service.NewTweetManager()
 
-	var tweet, secondTweet *domain.Tweet
+	var tweet, secondTweet domain.Tweet
 
 	user := "nportas"
 	anotherUser := "mercadolibre"
 	text := "This is my first tweet"
 	secondText := "This was his second tweet"
 
-	tweet = domain.NewTweet(user, text)
-	secondTweet = domain.NewTweet(anotherUser, secondText)
+	tweet = domain.NewTextTweet(user, text)
+	secondTweet = domain.NewTextTweet(anotherUser, secondText)
 
 	id, _ := tm.PublishTweet(tweet)
 	tm.PublishTweet(secondTweet)
@@ -404,15 +405,15 @@ func TestFavouriteList(t *testing.T) {
 
 	tm := service.NewTweetManager()
 
-	var tweet, secondTweet *domain.Tweet
+	var tweet, secondTweet domain.Tweet
 
 	user := "nportas"
 	anotherUser := "mercadolibre"
 	text := "This is my first tweet"
 	secondText := "This was his second tweet"
 
-	tweet = domain.NewTweet(user, text)
-	secondTweet = domain.NewTweet(anotherUser, secondText)
+	tweet = domain.NewTextTweet(user, text)
+	secondTweet = domain.NewTextTweet(anotherUser, secondText)
 
 	id, _ := tm.PublishTweet(tweet)
 	tm.PublishTweet(secondTweet)
@@ -427,15 +428,15 @@ func TestFavouriteList(t *testing.T) {
 
 }
 
-func isValidTweet(t *testing.T, tweet *domain.Tweet, id int, user, text string) bool {
+func isValidTweet(t *testing.T, tweet domain.Tweet, id int, user, text string) bool {
 
-	if tweet.User != user && tweet.Text != text && tweet.ID != id {
+	if tweet.GetUser() != user && tweet.GetText() != text && tweet.GetID() != id {
 		t.Errorf("Expected tweet is %s: %s %d \nbut is %s: %s %d",
-			user, text, id, tweet.User, tweet.Text, tweet.ID)
+			user, text, id, tweet.GetUser(), tweet.GetText(), tweet.GetID())
 		return false
 	}
 
-	if tweet.Date == nil {
+	if tweet.GetDate() == nil {
 		t.Error("Expected date can't be nil")
 		return false
 	}

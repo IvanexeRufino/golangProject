@@ -9,8 +9,8 @@ import (
 
 //TweetManager struct
 type TweetManager struct {
-	Tweets    map[string][]*domain.Tweet
-	LastTweet *domain.Tweet
+	Tweets    map[string][]domain.Tweet
+	LastTweet domain.Tweet
 	Users     []*domain.User
 	TTs       map[string]int
 }
@@ -24,9 +24,9 @@ func NewTweetManager() *TweetManager {
 }
 
 //
-func (tm *TweetManager) iterateTweetForTTs(tweet *domain.Tweet) {
+func (tm *TweetManager) iterateTweetForTTs(tweet domain.Tweet) {
 
-	listOfWords := strings.Fields(tweet.Text)
+	listOfWords := strings.Fields(tweet.GetText())
 	for _, word := range listOfWords {
 		tm.TTs[word] = tm.TTs[word] + 1
 	}
@@ -34,39 +34,39 @@ func (tm *TweetManager) iterateTweetForTTs(tweet *domain.Tweet) {
 }
 
 //PublishTweet qe hace nada
-func (tm *TweetManager) PublishTweet(tweet2 *domain.Tweet) (int, error) {
+func (tm *TweetManager) PublishTweet(tweet2 domain.Tweet) (int, error) {
 	var err error
-	if tweet2.User == "" {
+	if tweet2.GetUser() == "" {
 		err = fmt.Errorf("user is required")
-	} else if tweet2.Text == "" {
+	} else if tweet2.GetText() == "" {
 		err = fmt.Errorf("text is required")
-	} else if len(tweet2.Text) > 140 {
+	} else if len(tweet2.GetText()) > 140 {
 		err = fmt.Errorf("text exceeds 140 characters")
 	} else {
-		_, ok := tm.Tweets[tweet2.User]
+		_, ok := tm.Tweets[tweet2.GetUser()]
 		if !ok {
-			usuarioNuevo := domain.NewUser(tweet2.User)
+			usuarioNuevo := domain.NewUser(tweet2.GetUser())
 			tm.Users = append(tm.Users, usuarioNuevo)
 		}
-		tm.Tweets[tweet2.User] = append(tm.Tweets[tweet2.User], tweet2)
+		tm.Tweets[tweet2.GetUser()] = append(tm.Tweets[tweet2.GetUser()], tweet2)
 		tm.LastTweet = tweet2
 		tm.iterateTweetForTTs(tweet2)
 	}
 
-	return tweet2.ID, err
+	return tweet2.GetID(), err
 }
 
 //InitializeService aloca espacio
 func (tm *TweetManager) InitializeService() {
-	tm.Tweets = make(map[string][]*domain.Tweet)
+	tm.Tweets = make(map[string][]domain.Tweet)
 	tm.LastTweet = nil
 	tm.Users = make([]*domain.User, 0)
 	tm.TTs = make(map[string]int)
 }
 
 //GetTweets getter
-func (tm *TweetManager) GetTweets() []*domain.Tweet {
-	var listOfTweets []*domain.Tweet
+func (tm *TweetManager) GetTweets() []domain.Tweet {
+	var listOfTweets []domain.Tweet
 	for _, listTweet := range tm.Tweets {
 		listOfTweets = append(listOfTweets, listTweet...)
 	}
@@ -74,7 +74,7 @@ func (tm *TweetManager) GetTweets() []*domain.Tweet {
 }
 
 //GetLastTweet return last tweet
-func (tm *TweetManager) GetLastTweet() *domain.Tweet {
+func (tm *TweetManager) GetLastTweet() domain.Tweet {
 	return tm.LastTweet
 }
 
@@ -85,9 +85,9 @@ func (tm *TweetManager) CleanTweet() {
 }
 
 //GetTweetByID recibe
-func (tm *TweetManager) GetTweetByID(id int) *domain.Tweet {
+func (tm *TweetManager) GetTweetByID(id int) domain.Tweet {
 	for _, tweet := range tm.GetTweets() {
-		if tweet.ID == id {
+		if tweet.GetID() == id {
 			return tweet
 		}
 	}
@@ -100,7 +100,7 @@ func (tm *TweetManager) CountTweetsByUser(user string) int {
 }
 
 //GetTweetsByUser return tweets by user
-func (tm *TweetManager) GetTweetsByUser(user string) []*domain.Tweet {
+func (tm *TweetManager) GetTweetsByUser(user string) []domain.Tweet {
 	return tm.Tweets[user]
 }
 
@@ -131,9 +131,9 @@ func (tm *TweetManager) Follow(follower, user string) error {
 }
 
 //GetTimeline returns followers published tweets
-func (tm *TweetManager) GetTimeline(user string) []*domain.Tweet {
+func (tm *TweetManager) GetTimeline(user string) []domain.Tweet {
 	followedUsers := tm.GetUserByName(user).Followeds
-	var listOfTweets []*domain.Tweet
+	var listOfTweets []domain.Tweet
 	for _, users := range followedUsers {
 		listOfTweets = append(listOfTweets, tm.Tweets[users]...)
 	}
@@ -221,7 +221,7 @@ func (tm *TweetManager) Fav(name string, id int) {
 }
 
 //GetTweetsFav list of favourite tweets
-func (tm *TweetManager) GetTweetsFav(name string) []*domain.Tweet {
+func (tm *TweetManager) GetTweetsFav(name string) []domain.Tweet {
 
 	user := tm.GetUserByName(name)
 	return user.FavouriteTweets
