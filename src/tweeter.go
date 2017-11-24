@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/abiosoft/ishell"
 	"github.com/golangProject/src/domain"
 	"github.com/golangProject/src/service"
@@ -251,6 +253,52 @@ func main() {
 			c.Println(listOfDMs)
 
 			return
+		},
+	})
+
+	shell.AddCmd(&ishell.Cmd{
+		Name: "retweetear",
+		Help: "retwitea",
+		Func: func(c *ishell.Context) {
+			c.Print("Ingrese el usuario")
+			name := c.ReadLine()
+			c.Print("ingrese el id del tweet")
+			id := c.ReadLine()
+			idNum, _ := strconv.Atoi(id)
+			tm.Retweetear(name, idNum)
+			c.Println("Ha retweeteado exitosamente")
+		},
+	})
+
+	shell.AddCmd(&ishell.Cmd{
+		Name: "favouriteTweet",
+		Help: "Adds to favourite",
+		Func: func(c *ishell.Context) {
+			c.Print("Ingrese el usuario")
+			name := c.ReadLine()
+			c.Print("ingrese el id del tweet")
+			id := c.ReadLine()
+			idNum, _ := strconv.Atoi(id)
+			tm.Fav(name, idNum)
+			c.Println("Tweet has been added to your favourit list")
+		},
+	})
+
+	shell.AddCmd(&ishell.Cmd{
+		Name: "getFavTweets",
+		Help: "Show all favourite tweets",
+		Func: func(c *ishell.Context) {
+			c.Print("Ingrese el usuario")
+			name := c.ReadLine()
+			ft := tm.GetTweetsFav(name)
+
+			if len(ft) != 0 {
+				for i := 0; i < len(ft); i++ {
+					c.Println(ft[i])
+				}
+			} else {
+				c.Println("There isnt any unreaded message registered yet")
+			}
 		},
 	})
 

@@ -194,3 +194,25 @@ func (tm *TweetManager) GetTrendingTopics() []string {
 
 	return trendings
 }
+
+//Retweetear the msg
+func (tm *TweetManager) Retweetear(name string, id int) {
+
+	tweet := tm.GetTweetByID(id)
+	tm.Tweets[name] = append(tm.Tweets[name], tweet)
+}
+
+//Fav add to favourites
+func (tm *TweetManager) Fav(name string, id int) {
+
+	tweet := tm.GetTweetByID(id)
+	user := tm.GetUserByName(name)
+	user.FavouriteTweets = append(user.FavouriteTweets, tweet)
+}
+
+//GetTweetsFav list of favourite tweets
+func (tm *TweetManager) GetTweetsFav(name string) []*Tweet {
+
+	user := tm.GetUserByName(name)
+	return user.FavouriteTweets
+}

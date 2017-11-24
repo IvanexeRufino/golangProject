@@ -354,7 +354,6 @@ func TestSendMessageToUser(t *testing.T) {
 	}
 
 }
-
 func TestTrendingTopicsAreTheMoreTweeted(t *testing.T) {
 
 	tm := service.NewTweetManager()
@@ -374,9 +373,59 @@ func TestTrendingTopicsAreTheMoreTweeted(t *testing.T) {
 
 	tts := tm.GetTrendingTopics()
 
-	if tts[0] != "This" && tts[1] != "tweet" {
+	if !(tts[0] == "This" || tts[0] == "tweet") && !(tts[1] == "tweet" || tts[1] == "This") {
 		t.Errorf("Expected this and tweet but was %s and %s", tts[0], tts[1])
 	}
+}
+func TestRetweetearAddsToTweets(t *testing.T) {
+	tm := service.NewTweetManager()
+
+	var tweet, secondTweet *domain.Tweet
+
+	user := "nportas"
+	anotherUser := "mercadolibre"
+	text := "This is my first tweet"
+	secondText := "This was his second tweet"
+
+	tweet = domain.NewTweet(user, text)
+	secondTweet = domain.NewTweet(anotherUser, secondText)
+
+	id, _ := tm.PublishTweet(tweet)
+	tm.PublishTweet(secondTweet)
+
+	tm.Retweetear(user, id)
+
+	if len(tm.Tweets[user]) != 2 {
+		t.Errorf("Expected a retweeted tweet")
+	}
+}
+
+func TestFavouriteList(t *testing.T) {
+
+	tm := service.NewTweetManager()
+
+	var tweet, secondTweet *domain.Tweet
+
+	user := "nportas"
+	anotherUser := "mercadolibre"
+	text := "This is my first tweet"
+	secondText := "This was his second tweet"
+
+	tweet = domain.NewTweet(user, text)
+	secondTweet = domain.NewTweet(anotherUser, secondText)
+
+	id, _ := tm.PublishTweet(tweet)
+	tm.PublishTweet(secondTweet)
+
+	tm.Fav(user, id)
+
+	userStruct := tm.GetUserByName(user)
+	favourites := userStruct.FavouriteTweets
+
+	if len(favourites) != 1 {
+		t.Errorf("Expected a favourite tweet")
+	}
+
 }
 
 func isValidTweet(t *testing.T, tweet *domain.Tweet, id int, user, text string) bool {
