@@ -4,7 +4,48 @@ import (
 	"testing"
 
 	"github.com/golangProject/src/domain"
+	"github.com/golangProject/src/service"
 )
+
+func TestAHundredPercentCoverage(t *testing.T) {
+
+	tweet := domain.NewTextTweet("grupoesfera", "This is my tweet")
+	tweet2 := domain.NewTextTweet("grupoesfera2", "This is my tweet")
+	tweet3 := domain.NewImageTweet("algo", "otro", "nuevo")
+	tweet4 := domain.NewQuoteTweet("algo", "otro", tweet3)
+
+	tm := service.NewTweetManager()
+
+	tm.PublishTweet(tweet)
+	tm.PublishTweet(tweet2)
+	tm.PublishTweet(tweet3)
+	tm.PublishTweet(tweet4)
+	string1 := tweet3.String()
+	string2 := tweet4.String()
+
+	tm.SendMessage("grupoesfera", "grupoesfera2", "otro")
+
+	if string1 != tweet3.PrintableTweet() {
+		t.Errorf("Expected to be the same")
+	}
+
+	if string2 != tweet4.PrintableTweet() {
+		t.Errorf("Expected to be the same")
+	}
+
+	if tweet3.GetDate() == nil {
+		t.Error("Expected a date")
+	}
+
+	if tweet.GetDate() == nil {
+		t.Error("Expected a date")
+	}
+
+	if tweet4.GetDate() == nil {
+		t.Error("Expected a date")
+	}
+
+}
 
 func TestTextTweetPrintsUserAndText(t *testing.T) {
 
@@ -20,16 +61,6 @@ func TestTextTweetPrintsUserAndText(t *testing.T) {
 		t.Errorf("The expected text is %s but was %s", expectedText, text)
 	}
 
-	//100% coverage
-
-	// tweet2 := domain.NewTweet("grupoesfera2", "This is my tweet")
-
-	// tm := service.NewTweetManager()
-
-	// tm.PublishTweet(tweet)
-	// tm.PublishTweet(tweet2)
-
-	// tm.SendMessage("grupoesfera", "grupoesfera2", "otro")
 }
 
 func TestImageTweetPrintsUserTextAndImageURL(t *testing.T) {

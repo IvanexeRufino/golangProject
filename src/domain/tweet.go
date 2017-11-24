@@ -105,7 +105,7 @@ func NewImageTweet(user, text, url string) *ImageTweet {
 
 //PrintableTweet nice tweet
 func (t *ImageTweet) PrintableTweet() string {
-	return fmt.Sprintf("@%s: %s %s", t.User, t.Text, t.URL)
+	return fmt.Sprintf("@%s: %s %s", t.GetUser(), t.GetText(), t.URL)
 }
 
 func (t *ImageTweet) String() string {
@@ -152,7 +152,7 @@ func NewQuoteTweet(user, text string, tweetQuoted Tweet) *QuoteTweet {
 
 //PrintableTweet nice tweet
 func (t *QuoteTweet) PrintableTweet() string {
-	return fmt.Sprintf(`@%s: %s "%s"`, t.User, t.Text, t.Tweet.PrintableTweet())
+	return fmt.Sprintf(`@%s: %s "%s"`, t.GetUser(), t.GetText(), t.Tweet.PrintableTweet())
 }
 
 func (t *QuoteTweet) String() string {
