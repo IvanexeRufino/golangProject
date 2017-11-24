@@ -116,3 +116,10 @@ func (tm *TweetManager) GetTimeline(user string) []*Tweet {
 	}
 	return listOfTweets
 }
+
+//SendMessage send a message
+func (tm *TweetManager) SendMessage(from, to, message string) {
+	dm := NewDirectMessage(from, message)
+	user := tm.GetUserByName(to)
+	user.DirectMessages = append(user.DirectMessages, dm)
+}

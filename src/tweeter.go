@@ -18,8 +18,9 @@ func main() {
 		Name: "publishTweet",
 		Help: "Publishes a tweet",
 		Func: func(c *ishell.Context) {
-			var tweet *domain.Tweet
+
 			defer c.ShowPrompt(true)
+			var tweet *domain.Tweet
 			c.Print("Enter your username: ")
 			user := c.ReadLine()
 			c.Print("Write your tweet: ")
@@ -75,6 +76,7 @@ func main() {
 		Name: "cleanTweet",
 		Help: "Removes tweet",
 		Func: func(c *ishell.Context) {
+			defer c.ShowPrompt(true)
 			tm.CleanTweet()
 			c.Print("Tweet remove\n")
 			return
@@ -140,6 +142,7 @@ func main() {
 		Help: "Shows published tweets that you  might be interested in",
 		Func: func(c *ishell.Context) {
 
+			defer c.ShowPrompt(true)
 			c.Print("Enter your username: ")
 			user := c.ReadLine()
 			listofTweets := tm.GetTimeline(user)
@@ -160,6 +163,7 @@ func main() {
 		Help: "Shows registered users",
 		Func: func(c *ishell.Context) {
 
+			defer c.ShowPrompt(true)
 			listofUsers := tm.Users
 
 			if len(listofUsers) != 0 {
@@ -169,6 +173,24 @@ func main() {
 			} else {
 				c.Println("There isnt any user registered yet")
 			}
+			return
+		},
+	})
+
+	shell.AddCmd(&ishell.Cmd{
+		Name: "sendMessage",
+		Help: "Send a message from a user to another",
+		Func: func(c *ishell.Context) {
+
+			c.Print("Enter your username: ")
+			from := c.ReadLine()
+			c.Print("Enter the reciever username: ")
+			to := c.ReadLine()
+			c.Print("Write your message: ")
+			message := c.ReadLine()
+
+			tm.SendMessage(from, to, message)
+
 			return
 		},
 	})
