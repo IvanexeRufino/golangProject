@@ -260,9 +260,9 @@ func main() {
 		Name: "retweetear",
 		Help: "retwitea",
 		Func: func(c *ishell.Context) {
-			c.Print("Ingrese el usuario")
+			c.Print("Ingrese el usuario: ")
 			name := c.ReadLine()
-			c.Print("ingrese el id del tweet")
+			c.Print("ingrese el id del tweet: ")
 			id := c.ReadLine()
 			idNum, _ := strconv.Atoi(id)
 			tm.Retweetear(name, idNum)
@@ -274,9 +274,9 @@ func main() {
 		Name: "favouriteTweet",
 		Help: "Adds to favourite",
 		Func: func(c *ishell.Context) {
-			c.Print("Ingrese el usuario")
+			c.Print("Ingrese el usuario: ")
 			name := c.ReadLine()
-			c.Print("ingrese el id del tweet")
+			c.Print("ingrese el id del tweet: ")
 			id := c.ReadLine()
 			idNum, _ := strconv.Atoi(id)
 			tm.Fav(name, idNum)
@@ -288,7 +288,7 @@ func main() {
 		Name: "getFavTweets",
 		Help: "Show all favourite tweets",
 		Func: func(c *ishell.Context) {
-			c.Print("Ingrese el usuario")
+			c.Print("Ingrese el usuario: ")
 			name := c.ReadLine()
 			ft := tm.GetTweetsFav(name)
 
@@ -297,7 +297,7 @@ func main() {
 					c.Println(ft[i])
 				}
 			} else {
-				c.Println("There isnt any unreaded message registered yet")
+				c.Println("This user hasnt got any fav tweets")
 			}
 		},
 	})
