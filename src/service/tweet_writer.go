@@ -11,7 +11,7 @@ type ChannelTweetWriter struct {
 
 //TweetWriter interface
 type TweetWriter interface {
-	WriteTweet(chan domain.Tweet, chan bool)
+	WriteTweet(domain.Tweet, chan bool)
 }
 
 //MemoryTweetWriter struct
@@ -43,10 +43,13 @@ func NewChannelTweetWriter(tw TweetWriter) *ChannelTweetWriter {
 
 //WriteTweet paralelized
 func (ctw *ChannelTweetWriter) WriteTweet(tweets chan domain.Tweet, sync chan bool) {
-	ctw.Writer.WriteTweet(tweets, sync)
+	for tweet := range tweets {
+		ctw.Writer.WriteTweet(tweet, sync)
+	}
+	sync <- true
 }
 
 //WriteTweet writing
-func (mtw *MemoryTweetWriter) WriteTweet(tweets chan domain.Tweet, sync chan bool) {
-	mtw.Tweets = append(mtw.Tweets, <-tweets)
+func (mtw *MemoryTweetWriter) WriteTweet(tweets domain.Tweet, sync chan bool) {
+	mtw.Tweets = append(mtw.Tweets, tweets)
 }
