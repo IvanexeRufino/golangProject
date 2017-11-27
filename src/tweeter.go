@@ -150,11 +150,9 @@ func main() {
 		Func: func(c *ishell.Context) {
 
 			defer c.ShowPrompt(true)
-			c.Print("Enter your username: ")
-			user := c.ReadLine()
 			c.Print("Enter a username you want to follow: ")
 			usertoFollow := c.ReadLine()
-			err := tm.Follow(user, usertoFollow)
+			err := tm.Follow(user.Name, usertoFollow)
 			if err == nil {
 				c.Println("You are now following ", usertoFollow)
 			} else {
@@ -170,9 +168,7 @@ func main() {
 		Func: func(c *ishell.Context) {
 
 			defer c.ShowPrompt(true)
-			c.Print("Enter your username: ")
-			user := c.ReadLine()
-			listofTweets := tm.GetTimeline(user)
+			listofTweets := tm.GetTimeline(user.Name)
 
 			if len(listofTweets) != 0 {
 				for i := 0; i < len(listofTweets); i++ {
@@ -209,14 +205,12 @@ func main() {
 		Help: "Send a message from a user to another",
 		Func: func(c *ishell.Context) {
 
-			c.Print("Enter your username: ")
-			from := c.ReadLine()
 			c.Print("Enter the reciever username: ")
 			to := c.ReadLine()
 			c.Print("Write your message: ")
 			message := c.ReadLine()
 
-			tm.SendMessage(from, to, message)
+			tm.SendMessage(user.Name, to, message)
 
 			return
 		},
@@ -227,10 +221,7 @@ func main() {
 		Help: "Get all messages from a user",
 		Func: func(c *ishell.Context) {
 
-			c.Print("Enter your username: ")
-			user := c.ReadLine()
-
-			listOfDMs := tm.GetAllDirectMessages(user)
+			listOfDMs := tm.GetAllDirectMessages(user.Name)
 
 			if len(listOfDMs) != 0 {
 				for i := 0; i < len(listOfDMs); i++ {
@@ -249,10 +240,7 @@ func main() {
 		Help: "Get all unreaded messages from a user",
 		Func: func(c *ishell.Context) {
 
-			c.Print("Enter your username: ")
-			user := c.ReadLine()
-
-			listOfDMs := tm.GetUnreadedMessages(user)
+			listOfDMs := tm.GetUnreadedMessages(user.Name)
 
 			if len(listOfDMs) != 0 {
 				for i := 0; i < len(listOfDMs); i++ {
@@ -285,12 +273,10 @@ func main() {
 		Name: "retweetear",
 		Help: "retwitea",
 		Func: func(c *ishell.Context) {
-			c.Print("Ingrese el usuario: ")
-			name := c.ReadLine()
 			c.Print("ingrese el id del tweet: ")
 			id := c.ReadLine()
 			idNum, _ := strconv.Atoi(id)
-			tm.Retweetear(name, idNum)
+			tm.Retweetear(user.Name, idNum)
 			c.Println("Ha retweeteado exitosamente")
 		},
 	})
@@ -299,12 +285,10 @@ func main() {
 		Name: "favouriteTweet",
 		Help: "Adds to favourite",
 		Func: func(c *ishell.Context) {
-			c.Print("Ingrese el usuario: ")
-			name := c.ReadLine()
 			c.Print("ingrese el id del tweet: ")
 			id := c.ReadLine()
 			idNum, _ := strconv.Atoi(id)
-			tm.Fav(name, idNum)
+			tm.Fav(user.Name, idNum)
 			c.Println("Tweet has been added to your favourit list")
 		},
 	})
@@ -313,9 +297,7 @@ func main() {
 		Name: "getFavTweets",
 		Help: "Show all favourite tweets",
 		Func: func(c *ishell.Context) {
-			c.Print("Ingrese el usuario: ")
-			name := c.ReadLine()
-			ft := tm.GetTweetsFav(name)
+			ft := tm.GetTweetsFav(user.Name)
 
 			if len(ft) != 0 {
 				for i := 0; i < len(ft); i++ {
