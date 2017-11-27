@@ -22,12 +22,12 @@ func main() {
 		Func: func(c *ishell.Context) {
 
 			defer c.ShowPrompt(true)
-			var tweet *domain.Tweet
+			var tweet domain.Tweet
 			c.Print("Enter your username: ")
 			user := c.ReadLine()
 			c.Print("Write your tweet: ")
 			text := c.ReadLine()
-			tweet = domain.NewTweet(user, text)
+			tweet = domain.NewTextTweet(user, text)
 			id, err := tm.PublishTweet(tweet)
 			if err != nil {
 				c.Print("Your tweet has some error, empty text or greater than 140 characters or empty user \n")
