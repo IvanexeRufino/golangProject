@@ -8,13 +8,40 @@ import (
 	"github.com/golangProject/src/service"
 )
 
+func login(shelly *ishell.Shell, tm *service.TweetManager) *domain.User {
+	shelly.Print("Enter your username: ")
+	shelly.SetPrompt("Tweeter >> ")
+	usuario := shelly.ReadLine()
+	user := tm.GetUserByName(usuario)
+
+	if user != nil {
+		shelly.Print("You are already registered in the system, welcome back \n")
+	} else {
+		user = tm.AddUser(usuario)
+		shelly.Print("You ahave been registered in our system, welcome \n")
+	}
+
+	return user
+}
+
 func main() {
 
+	var user *domain.User
+
 	shell := ishell.New()
-	shell.SetPrompt("Tweeter >> ")
+	tm := service.NewTweetManager()
+
+	user = login(shell, tm)
+
 	shell.Print("Type 'help' to know commands\n")
 
-	tm := service.NewTweetManager()
+	shell.AddCmd(&ishell.Cmd{
+		Name: "logout",
+		Help: "Exit session",
+		Func: func(c *ishell.Context) {
+			user = login(shell, tm)
+		},
+	})
 
 	shell.AddCmd(&ishell.Cmd{
 		Name: "publishTweet",
@@ -23,11 +50,9 @@ func main() {
 
 			defer c.ShowPrompt(true)
 			var tweet domain.Tweet
-			c.Print("Enter your username: ")
-			user := c.ReadLine()
 			c.Print("Write your tweet: ")
 			text := c.ReadLine()
-			tweet = domain.NewTextTweet(user, text)
+			tweet = domain.NewTextTweet(user.Name, text)
 			id, err := tm.PublishTweet(tweet)
 			if err != nil {
 				c.Print("Your tweet has some error, empty text or greater than 140 characters or empty user \n")
@@ -299,6 +324,34 @@ func main() {
 			} else {
 				c.Println("This user hasnt got any fav tweets")
 			}
+		},
+	})
+
+	shell.AddCmd(&ishell.Cmd{
+		Name: "addPlugin",
+		Help: "Adds a plugin",
+		Func: func(c *ishell.Context) {
+
+			defer c.ShowPrompt(true)
+
+			c.Print("Ingrese el id del plugin: ")
+			id := c.ReadLine()
+
+			ident, ok := strconv.Atoi(id)
+
+			if (ident == 1 || ident == 2 || ident == 3) && ok == nil {
+
+				plug := service.NewPlugin(ident)
+
+				tm.AddPlugin(plug)
+
+				c.Println("Plugin has been adde correctly")
+
+			} else {
+				c.Println("That id doesnt exist")
+			}
+
+			return
 		},
 	})
 

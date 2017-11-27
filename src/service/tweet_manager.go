@@ -13,6 +13,7 @@ type TweetManager struct {
 	LastTweet domain.Tweet
 	Users     []*domain.User
 	TTs       map[string]int
+	Plugins   []Plugin
 }
 
 //NewTweetManager constructor
@@ -23,7 +24,6 @@ func NewTweetManager() *TweetManager {
 	return &tweetMan
 }
 
-//
 func (tm *TweetManager) iterateTweetForTTs(tweet domain.Tweet) {
 
 	listOfWords := strings.Fields(tweet.GetText())
@@ -31,6 +31,25 @@ func (tm *TweetManager) iterateTweetForTTs(tweet domain.Tweet) {
 		tm.TTs[word] = tm.TTs[word] + 1
 	}
 
+}
+
+//AddPlugin adds
+func (tm *TweetManager) AddPlugin(plug Plugin) {
+	tm.Plugins = append(tm.Plugins, plug)
+}
+
+//ExecuteActions obersevers
+func (tm *TweetManager) ExecuteActions(user string) {
+	for _, plug := range tm.Plugins {
+		plug.action(user, tm)
+	}
+}
+
+//AddUser adds one
+func (tm *TweetManager) AddUser(user string) *domain.User {
+	usuarioNuevo := domain.NewUser(user)
+	tm.Users = append(tm.Users, usuarioNuevo)
+	return usuarioNuevo
 }
 
 //PublishTweet qe hace nada
@@ -43,15 +62,12 @@ func (tm *TweetManager) PublishTweet(tweet2 domain.Tweet) (int, error) {
 	} else if len(tweet2.GetText()) > 140 {
 		err = fmt.Errorf("text exceeds 140 characters")
 	} else {
-		_, ok := tm.Tweets[tweet2.GetUser()]
-		if !ok {
-			usuarioNuevo := domain.NewUser(tweet2.GetUser())
-			tm.Users = append(tm.Users, usuarioNuevo)
-		}
 		tm.Tweets[tweet2.GetUser()] = append(tm.Tweets[tweet2.GetUser()], tweet2)
 		tm.LastTweet = tweet2
 		tm.iterateTweetForTTs(tweet2)
 	}
+
+	tm.ExecuteActions(tweet2.GetUser())
 
 	return tweet2.GetID(), err
 }
@@ -62,6 +78,7 @@ func (tm *TweetManager) InitializeService() {
 	tm.LastTweet = nil
 	tm.Users = make([]*domain.User, 0)
 	tm.TTs = make(map[string]int)
+	tm.Plugins = make([]Plugin, 0)
 }
 
 //GetTweets getter
