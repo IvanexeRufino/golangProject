@@ -280,6 +280,9 @@ func TestFollowuser(t *testing.T) {
 	tweet = domain.NewTextTweet(user, text)
 	secondTweet = domain.NewTextTweet(anotherUser, secondText)
 
+	tm.AddUser(user)
+	tm.AddUser(anotherUser)
+
 	firstId, _ := tm.PublishTweet(tweet)
 	tm.PublishTweet(secondTweet)
 
@@ -319,6 +322,9 @@ func TestSendMessageToUser(t *testing.T) {
 
 	tweet = domain.NewTextTweet(user, text)
 	secondTweet = domain.NewTextTweet(anotherUser, secondText)
+
+	tm.AddUser(user)
+	tm.AddUser(anotherUser)
 
 	tm.PublishTweet(tweet)
 	tm.PublishTweet(secondTweet)
@@ -368,6 +374,9 @@ func TestTrendingTopicsAreTheMoreTweeted(t *testing.T) {
 	tweet = domain.NewTextTweet(user, text)
 	secondTweet = domain.NewTextTweet(anotherUser, secondText)
 
+	tm.AddUser(user)
+	tm.AddUser(anotherUser)
+
 	tm.PublishTweet(tweet)
 	tm.PublishTweet(secondTweet)
 
@@ -390,6 +399,9 @@ func TestRetweetearAddsToTweets(t *testing.T) {
 
 	tweet = domain.NewTextTweet(user, text)
 	secondTweet = domain.NewTextTweet(anotherUser, secondText)
+
+	tm.AddUser(user)
+	tm.AddUser(anotherUser)
 
 	id, _ := tm.PublishTweet(tweet)
 	tm.PublishTweet(secondTweet)
@@ -415,6 +427,9 @@ func TestFavouriteList(t *testing.T) {
 	tweet = domain.NewTextTweet(user, text)
 	secondTweet = domain.NewTextTweet(anotherUser, secondText)
 
+	tm.AddUser(user)
+	tm.AddUser(anotherUser)
+
 	id, _ := tm.PublishTweet(tweet)
 	tm.PublishTweet(secondTweet)
 
@@ -424,6 +439,42 @@ func TestFavouriteList(t *testing.T) {
 
 	if len(favourites) != 1 {
 		t.Errorf("Expected a favourite tweet")
+	}
+
+}
+
+func TestAddingPlugins(t *testing.T) {
+
+	tm := service.NewTweetManager()
+
+	var tweet, secondTweet domain.Tweet
+
+	user := "nportas"
+	anotherUser := "mercadolibre"
+	text := "This is my first tweet"
+	secondText := "This was his second tweet"
+
+	tweet = domain.NewTextTweet(user, text)
+	secondTweet = domain.NewTextTweet(anotherUser, secondText)
+
+	tm.AddUser(user)
+	tm.AddUser(anotherUser)
+
+	face := service.NewPlugin(1)
+	google := service.NewPlugin(2)
+	tweeter := service.NewPlugin(3)
+
+	tm.AddPlugin(face)
+	tm.AddPlugin(google)
+	tm.AddPlugin(tweeter)
+
+	tm.PublishTweet(tweet)
+	tm.PublishTweet(secondTweet)
+
+	plugins := tm.Plugins
+
+	if len(plugins) != 3 {
+		t.Errorf("Expected all plugins")
 	}
 
 }
