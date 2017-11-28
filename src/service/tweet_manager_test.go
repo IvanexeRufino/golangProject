@@ -408,7 +408,7 @@ func TestRetweetearAddsToTweets(t *testing.T) {
 
 	tm.Retweetear(user, id)
 
-	if len(tm.Tweets[user]) != 2 {
+	if len(tm.Writer.GetTweets()[user]) != 2 {
 		t.Errorf("Expected a retweeted tweet")
 	}
 }

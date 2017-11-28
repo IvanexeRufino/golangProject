@@ -9,11 +9,11 @@ import (
 
 //TweetManager struct
 type TweetManager struct {
-	Tweets    map[string][]domain.Tweet
 	LastTweet domain.Tweet
 	Users     []*domain.User
 	TTs       map[string]int
 	Plugins   []Plugin
+	Writer    *ChannelTweetWriter
 }
 
 //NewTweetManager constructor
@@ -62,7 +62,14 @@ func (tm *TweetManager) PublishTweet(tweet2 domain.Tweet) (int, error) {
 	} else if len(tweet2.GetText()) > 140 {
 		err = fmt.Errorf("text exceeds 140 characters")
 	} else {
-		tm.Tweets[tweet2.GetUser()] = append(tm.Tweets[tweet2.GetUser()], tweet2)
+		tweetsToWrite := make(chan domain.Tweet)
+		quit := make(chan bool)
+
+		go tm.Writer.WriteTweet(tweetsToWrite, quit)
+		tweetsToWrite <- tweet2
+		close(tweetsToWrite)
+
+		<-quit
 		tm.LastTweet = tweet2
 		tm.iterateTweetForTTs(tweet2)
 	}
@@ -74,17 +81,17 @@ func (tm *TweetManager) PublishTweet(tweet2 domain.Tweet) (int, error) {
 
 //InitializeService aloca espacio
 func (tm *TweetManager) InitializeService() {
-	tm.Tweets = make(map[string][]domain.Tweet)
 	tm.LastTweet = nil
 	tm.Users = make([]*domain.User, 0)
 	tm.TTs = make(map[string]int)
 	tm.Plugins = make([]Plugin, 0)
+	tm.Writer = NewChannelTweetWriter(NewMemoryTweetWriter())
 }
 
 //GetTweets getter
 func (tm *TweetManager) GetTweets() []domain.Tweet {
 	var listOfTweets []domain.Tweet
-	for _, listTweet := range tm.Tweets {
+	for _, listTweet := range tm.Writer.GetTweets() {
 		listOfTweets = append(listOfTweets, listTweet...)
 	}
 	return listOfTweets
@@ -97,7 +104,6 @@ func (tm *TweetManager) GetLastTweet() domain.Tweet {
 
 //CleanTweet limpia el texto
 func (tm *TweetManager) CleanTweet() {
-	tm.Tweets = nil
 	tm.InitializeService()
 }
 
@@ -113,12 +119,12 @@ func (tm *TweetManager) GetTweetByID(id int) domain.Tweet {
 
 //CountTweetsByUser cuenta twees por usuario
 func (tm *TweetManager) CountTweetsByUser(user string) int {
-	return len(tm.Tweets[user])
+	return len(tm.Writer.GetTweets()[user])
 }
 
 //GetTweetsByUser return tweets by user
 func (tm *TweetManager) GetTweetsByUser(user string) []domain.Tweet {
-	return tm.Tweets[user]
+	return tm.Writer.GetTweets()[user]
 }
 
 //GetUserByName get user by name
@@ -152,7 +158,7 @@ func (tm *TweetManager) GetTimeline(user string) []domain.Tweet {
 	followedUsers := tm.GetUserByName(user).Followeds
 	var listOfTweets []domain.Tweet
 	for _, users := range followedUsers {
-		listOfTweets = append(listOfTweets, tm.Tweets[users]...)
+		listOfTweets = append(listOfTweets, tm.Writer.GetTweets()[users]...)
 	}
 	return listOfTweets
 }
@@ -226,7 +232,7 @@ func (tm *TweetManager) GetTrendingTopics() []string {
 func (tm *TweetManager) Retweetear(name string, id int) {
 
 	tweet := tm.GetTweetByID(id)
-	tm.Tweets[name] = append(tm.Tweets[name], tweet)
+	tm.Writer.GetTweets()[name] = append(tm.Writer.GetTweets()[name], tweet)
 }
 
 //Fav add to favourites

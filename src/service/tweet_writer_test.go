@@ -29,11 +29,11 @@ func TestWriter(t *testing.T) {
 	<-quit
 
 	// Validation
-	if memoryTweetWriter.Tweets[0] != tweet {
+	if memoryTweetWriter.Tweets[tweet.GetUser()][0] != tweet {
 		t.Errorf("A tweet in the writer was expected")
 	}
 
-	if memoryTweetWriter.Tweets[1] != tweet2 {
+	if memoryTweetWriter.Tweets[tweet.GetUser()][1] != tweet2 {
 		t.Errorf("A tweet in the writer was expected")
 	}
 }
