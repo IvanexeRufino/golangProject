@@ -14,7 +14,11 @@ func TestAHundredPercentCoverage(t *testing.T) {
 	tweet3 := domain.NewImageTweet("algo", "otro", "nuevo")
 	tweet4 := domain.NewQuoteTweet("algo", "otro", tweet3)
 
+	us := domain.NewUser("hola")
+
 	tm := service.NewTweetManager()
+
+	dm := domain.NewDirectMessage(us.Name, "otro")
 
 	tm.PublishTweet(tweet)
 	tm.PublishTweet(tweet2)
@@ -43,6 +47,10 @@ func TestAHundredPercentCoverage(t *testing.T) {
 
 	if tweet4.GetDate() == nil {
 		t.Error("Expected a date")
+	}
+
+	if dm.From == "otro" {
+		t.Errorf("goodbye")
 	}
 
 }
