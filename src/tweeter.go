@@ -5,6 +5,7 @@ import (
 
 	"github.com/abiosoft/ishell"
 	"github.com/golangProject/src/domain"
+	"github.com/golangProject/src/rest"
 	"github.com/golangProject/src/service"
 )
 
@@ -30,6 +31,9 @@ func main() {
 
 	shell := ishell.New()
 	tm := service.NewTweetManager()
+
+	router := rest.NewGinServer(tm)
+	router.StartGinServer()
 
 	user = login(shell, tm)
 
