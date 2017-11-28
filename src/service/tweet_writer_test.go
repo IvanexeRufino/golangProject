@@ -7,7 +7,7 @@ import (
 	"github.com/golangProject/src/service"
 )
 
-func TestWriter(t *testing.T) {
+func TestMemoryWriter(t *testing.T) {
 
 	// Initialization
 	tweet := domain.NewTextTweet("grupoesfera", "Async tweet")
@@ -36,4 +36,29 @@ func TestWriter(t *testing.T) {
 	if memoryTweetWriter.Tweets[tweet.GetUser()][1] != tweet2 {
 		t.Errorf("A tweet in the writer was expected")
 	}
+}
+
+func TestFileWriter(t *testing.T) {
+
+	// Initialization
+	tweet := domain.NewTextTweet("grupoesfera", "Async tweet")
+	tweet2 := domain.NewTextTweet("grupoesfera", "Async tweet2")
+
+	fileTweetWriter := service.NewFileTweetWriter()
+	tweetWriter := service.NewChannelTweetWriter(fileTweetWriter)
+
+	tweetsToWrite := make(chan domain.Tweet)
+	quit := make(chan bool)
+
+	go tweetWriter.WriteTweet(tweetsToWrite, quit)
+
+	// Operation
+	tweetsToWrite <- tweet
+	tweetsToWrite <- tweet2
+	close(tweetsToWrite)
+
+	<-quit
+
+	tweetWriter.GetTweets()
+
 }

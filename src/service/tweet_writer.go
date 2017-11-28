@@ -36,8 +36,8 @@ func NewMemoryTweetWriter() *MemoryTweetWriter {
 	return &tw
 }
 
-//NewFileTweetWritter constructor
-func NewFileTweetWritter() *FileTweetWriter {
+//NewFileTweetWriter constructor
+func NewFileTweetWriter() *FileTweetWriter {
 
 	file, _ := os.OpenFile(
 		"tweets.txt",
@@ -98,4 +98,9 @@ func (ftw *FileTweetWriter) WriteTweet(tweets domain.Tweet) {
 		ftw.File.Write(byteSlice)
 	}
 
+}
+
+//GetList getter
+func (ftw *FileTweetWriter) GetList() map[string][]domain.Tweet {
+	return make(map[string][]domain.Tweet)
 }
